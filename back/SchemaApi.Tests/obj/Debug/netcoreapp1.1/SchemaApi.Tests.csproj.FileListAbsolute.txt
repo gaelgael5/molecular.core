@@ -1,0 +1,29 @@
+C:\Users\g.beard\Documents\Visual Studio 2017\Projects\TestApiCore\SchemaApi.Tests\bin\Debug\netcoreapp1.1\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll
+C:\Users\g.beard\Documents\Visual Studio 2017\Projects\TestApiCore\SchemaApi.Tests\bin\Debug\netcoreapp1.1\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.Interface.dll
+C:\Users\g.beard\Documents\Visual Studio 2017\Projects\TestApiCore\SchemaApi.Tests\bin\Debug\netcoreapp1.1\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll
+C:\Users\g.beard\Documents\Visual Studio 2017\Projects\TestApiCore\SchemaApi.Tests\bin\Debug\netcoreapp1.1\SchemaApi.Tests.deps.json
+C:\Users\g.beard\Documents\Visual Studio 2017\Projects\TestApiCore\SchemaApi.Tests\bin\Debug\netcoreapp1.1\SchemaApi.Tests.runtimeconfig.json
+C:\Users\g.beard\Documents\Visual Studio 2017\Projects\TestApiCore\SchemaApi.Tests\bin\Debug\netcoreapp1.1\SchemaApi.Tests.runtimeconfig.dev.json
+C:\Users\g.beard\Documents\Visual Studio 2017\Projects\TestApiCore\SchemaApi.Tests\bin\Debug\netcoreapp1.1\SchemaApi.Tests.dll
+C:\Users\g.beard\Documents\Visual Studio 2017\Projects\TestApiCore\SchemaApi.Tests\bin\Debug\netcoreapp1.1\SchemaApi.Tests.pdb
+C:\Users\g.beard\Documents\Visual Studio 2017\Projects\TestApiCore\SchemaApi.Tests\bin\Debug\netcoreapp1.1\SchemaApi.dll
+C:\Users\g.beard\Documents\Visual Studio 2017\Projects\TestApiCore\SchemaApi.Tests\bin\Debug\netcoreapp1.1\SchemaApi.pdb
+C:\Users\g.beard\Documents\Visual Studio 2017\Projects\TestApiCore\SchemaApi.Tests\obj\Debug\netcoreapp1.1\SchemaApi.Tests.csprojResolveAssemblyReference.cache
+C:\Users\g.beard\Documents\Visual Studio 2017\Projects\TestApiCore\SchemaApi.Tests\obj\Debug\netcoreapp1.1\SchemaApi.Tests.AssemblyInfo.cs
+C:\Users\g.beard\Documents\Visual Studio 2017\Projects\TestApiCore\SchemaApi.Tests\obj\Debug\netcoreapp1.1\SchemaApi.Tests.dll
+C:\Users\g.beard\Documents\Visual Studio 2017\Projects\TestApiCore\SchemaApi.Tests\obj\Debug\netcoreapp1.1\SchemaApi.Tests.pdb
+C:\_d\src\Bb\Pyramid\back\SchemaApi.Tests\bin\Debug\netcoreapp1.1\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll
+C:\_d\src\Bb\Pyramid\back\SchemaApi.Tests\bin\Debug\netcoreapp1.1\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.Interface.dll
+C:\_d\src\Bb\Pyramid\back\SchemaApi.Tests\bin\Debug\netcoreapp1.1\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll
+C:\_d\src\Bb\Pyramid\back\SchemaApi.Tests\bin\Debug\netcoreapp1.1\SchemaApi.Tests.deps.json
+C:\_d\src\Bb\Pyramid\back\SchemaApi.Tests\bin\Debug\netcoreapp1.1\SchemaApi.Tests.runtimeconfig.json
+C:\_d\src\Bb\Pyramid\back\SchemaApi.Tests\bin\Debug\netcoreapp1.1\SchemaApi.Tests.runtimeconfig.dev.json
+C:\_d\src\Bb\Pyramid\back\SchemaApi.Tests\bin\Debug\netcoreapp1.1\SchemaApi.Tests.dll
+C:\_d\src\Bb\Pyramid\back\SchemaApi.Tests\bin\Debug\netcoreapp1.1\SchemaApi.Tests.pdb
+C:\_d\src\Bb\Pyramid\back\SchemaApi.Tests\bin\Debug\netcoreapp1.1\SchemaApi.dll
+C:\_d\src\Bb\Pyramid\back\SchemaApi.Tests\bin\Debug\netcoreapp1.1\SchemaApi.pdb
+C:\_d\src\Bb\Pyramid\back\SchemaApi.Tests\obj\Debug\netcoreapp1.1\SchemaApi.Tests.csprojResolveAssemblyReference.cache
+C:\_d\src\Bb\Pyramid\back\SchemaApi.Tests\obj\Debug\netcoreapp1.1\SchemaApi.Tests.AssemblyInfo.cs
+C:\_d\src\Bb\Pyramid\back\SchemaApi.Tests\obj\Debug\netcoreapp1.1\SchemaApi.Tests.dll
+C:\_d\src\Bb\Pyramid\back\SchemaApi.Tests\obj\Debug\netcoreapp1.1\SchemaApi.Tests.pdb
+C:\_d\src\Bb\Pyramid\back\SchemaApi.Tests\bin\Debug\netcoreapp1.1\TargetKeys.json
