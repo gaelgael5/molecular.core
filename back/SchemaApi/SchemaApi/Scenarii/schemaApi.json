@@ -1,0 +1,17 @@
+﻿{
+  "Views": [
+    {
+      "ViewName": "angular2-typescript-service-models",
+      "Target": null
+    },
+    {
+      "ViewName": "angular2-typescript-service-interface",
+      "Target": null
+    },
+    {
+      "ViewName": "angular2-typescript-service",
+      "Target": null
+    }
+  ],
+  "Target": "::front"
+}

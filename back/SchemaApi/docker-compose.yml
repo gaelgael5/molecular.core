@@ -1,0 +1,8 @@
+version: '2'
+
+services:
+  schemaapi:
+    image: schemaapi
+    build:
+      context: ./SchemaApi
+      dockerfile: Dockerfile
