@@ -26,4 +26,5 @@ namespace SchemaApi.Controllers
         private readonly IApiDescriptionGroupCollectionProvider _apiExplorer;
 
     }
+
 }

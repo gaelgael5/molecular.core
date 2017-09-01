@@ -17,6 +17,7 @@ import { ContactComponent } from './contact/contact.component';
 
 
 import { Applications } from './applications/applications.component';
+import { Menu } from './Commons/Menus/Menu.model';
 
 
 @NgModule({
@@ -29,7 +30,8 @@ import { Applications } from './applications/applications.component';
     HomeComponent,
     ContactComponent,
 
-    Applications
+    Applications,
+    Menu
 
   ],
   imports: [

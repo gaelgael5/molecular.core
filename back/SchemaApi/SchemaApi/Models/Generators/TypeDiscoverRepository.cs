@@ -19,17 +19,19 @@ namespace SchemaApi.Models.Generators
             this.apiDescription = apiDescription;
 
             if (this.apiDescription != null)
-            {                
+            {
 
                 foreach (ApiDescriptionGroup group in apiDescription.ApiDescriptionGroups.Items)
                     foreach (ApiDescription api in group.Items)
                     {
 
                         foreach (var item in api.SupportedResponseTypes)
-                            Add(item.Type);
+                            if ((item.Type != null))
+                                Add(item.Type);
 
                         foreach (ApiParameterDescription parameter in api.ParameterDescriptions)
-                            Add(parameter.Type);
+                            if (parameter.Type != null)
+                                Add(parameter.Type);
 
                     }
             }
@@ -39,15 +41,24 @@ namespace SchemaApi.Models.Generators
 
         public void Add(Type type)
         {
-            
+
             if (Accept(type) && this._unique.Add(type))
             {
 
                 _types.Add(type);
 
-                foreach (PropertyInfo item in type.GetTypeInfo().GetProperties(BindingFlags.Instance | BindingFlags.Public))
-                    Add(item.PropertyType);
-            
+                var infos = type.GetTypeInfo();
+
+                if (infos != null)
+                {
+                    foreach (PropertyInfo item in infos.GetProperties(BindingFlags.Instance | BindingFlags.Public))
+                        Add(item.PropertyType);
+                }
+                else
+                {
+
+                }
+
                 var _base = type.GetTypeInfo().BaseType;
                 if (_base != null)
                     Add(_base);
@@ -92,20 +103,20 @@ namespace SchemaApi.Models.Generators
         public void FindTypeToImport(Type type, HashSet<Type> _types)
         {
 
-                if (type.IsConstructedGenericType)
-                {
-                    var t = type.GetTypeInfo().GetGenericTypeDefinition();
-                    if (Accept(t))
-                        _types.Add(t);
+            if (type.IsConstructedGenericType)
+            {
+                var t = type.GetTypeInfo().GetGenericTypeDefinition();
+                if (Accept(t))
+                    _types.Add(t);
 
-                    var t2 = type.GetTypeInfo().GetGenericArguments();
+                var t2 = type.GetTypeInfo().GetGenericArguments();
 
-                    foreach (var item in t2)
-                        if (Accept(item))
-                            _types.Add(item);
-                }
-                else if (Accept(type))
-                    _types.Add(type);
+                foreach (var item in t2)
+                    if (Accept(item))
+                        _types.Add(item);
+            }
+            else if (Accept(type))
+                _types.Add(type);
 
         }
 
@@ -115,7 +126,7 @@ namespace SchemaApi.Models.Generators
             {
                 Type _type = property.PropertyType;
                 FindTypeToImport(_type, _types);
-            }            
+            }
         }
 
         private List<Type> _types = new List<Type>();

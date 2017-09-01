@@ -23,29 +23,26 @@ namespace SchemaApi.Controllers
         }
 
         // GET api/values
-        [HttpGet("index")]
-        public IEnumerable<string> GetAll()
+        [HttpGet("list")]
+        public IEnumerable<string> GetList()
         {
-            var applications = ApplicationStructures.Instance.GetApplications();
+            var applications = Repositories<ApplicationStructure>.Instance.GetList();
             return applications;
         }
 
         // GET api/values/5
         [HttpGet("detail/{applicationName}")]
         public ApplicationStructure Get(string applicationName)
-        {
-            return ApplicationStructures.Instance.GetApplication(applicationName);
+        {            
+            return Repositories<ApplicationStructure>.Instance.Get(applicationName, applicationName);
         }
 
         // POST api/values
-        [HttpPost("save")]
-        public void Post([FromBody]ApplicationStructure application, string lockId)
+        [HttpPost("save/{lockid}")]
+        public void Post([FromBody]ApplicationStructure application, string lockid)
         {
-
             string userName = this.HttpContext.User.Identity.Name;
-
-            ApplicationStructures.Instance.SaveApplication(application, lockId, userName);
-
+            Repositories<ApplicationStructure>.Instance.Save(application, lockid, userName, application.Name);
         }
 
         // POST api/values
@@ -53,23 +50,24 @@ namespace SchemaApi.Controllers
         public string Lock([FromBody]string applicationName)
         {
             string userName = this.HttpContext.User.Identity.Name;
-            return ApplicationStructures.Instance.Lock(applicationName, userName);
+            return Repositories<ApplicationStructure>.Instance.Lock(applicationName, userName, applicationName);
         }
 
         // POST api/values
-        [HttpGet("unlock")]
-        public void UnLock([FromBody]string applicationName)
+        [HttpGet("unlock/{lockid}")]
+        public void UnLock([FromBody]string applicationName, string lockid)
         {
             string userName = this.HttpContext.User.Identity.Name;
-            ApplicationStructures.Instance.Unlock(applicationName, userName, this.HttpContext.User.IsInRole(Constants.Roles.Administrator));
+            Repositories<ApplicationStructure>.Instance.Unlock(applicationName, lockid, userName, this.HttpContext.User.IsInRole(Constants.Roles.Administrator));
         }
 
-        //// DELETE api/values/5
-        //[HttpDelete("{applicationName}")]
-        //public void Delete(string applicationName)
-        //{
-        //}
-
+        // DELETE api/values/5
+        [HttpDelete("{applicationName}/lockid")]
+        public void Delete(string applicationName, string lockid)
+        {
+            string userName = this.HttpContext.User.Identity.Name;
+            Repositories<ApplicationStructure>.Instance.Delete(applicationName, lockid, userName, applicationName);
+        }
 
         private readonly ILogger<SchemaController> logger;
 

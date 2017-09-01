@@ -14,7 +14,7 @@ namespace SchemaApi.Tests
         public void Test1()
         {
 
-            Type type = typeof(ApplicationStructure);
+            Type type = typeof(Structure);
 
 
             TypeDiscoverRepository repository = new TypeDiscoverRepository(null);

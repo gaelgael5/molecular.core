@@ -17,7 +17,7 @@ namespace SchemaApi.Helpers
             string relPath = diff.OriginalString;
 
             if (!relPath.StartsWith("."))
-                relPath = $".\\{relPath}";
+                relPath = $"./{relPath}";
 
             if (cutExtension)
             {

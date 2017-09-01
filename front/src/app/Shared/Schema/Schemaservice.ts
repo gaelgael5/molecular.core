@@ -10,7 +10,7 @@ import { Response, ResponseContentType } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import { BASE_PATH } from '../variables';
 import { Configuration } from '../configuration.model';
-import { ApplicationStructure } from '../SchemaApi/Models/Structures/ApplicationStruct';
+import { ApplicationStructure } from '../SchemaApi/Models/Structures/ApplicationStructure';
 
 @Injectable()export class Schema {
    protected basePath: string = 'http://petstore.swagger.io/v2';
@@ -56,8 +56,8 @@ import { ApplicationStructure } from '../SchemaApi/Models/Structures/Application
         return false;
     }
 
-   public GetAll() : Observable<Array<String>> {
-      return this.GetAll_WithHttpInfo()
+   public GetList() : Observable<Array<String>> {
+      return this.GetList_WithHttpInfo()
       .map((response: Response) =>  {
          if (response.status === 204) {
             return undefined;
@@ -68,13 +68,14 @@ import { ApplicationStructure } from '../SchemaApi/Models/Structures/Application
       }
       );
    }
+   private GetList_WithHttpInfo(extraHttpRequestParams? : any) : Observable<Response> {
 
-   private GetAll_WithHttpInfo(extraHttpRequestParams? : any) : Observable<Response> {
-
-      const path = this.basePath + '/api/Schema/index';
+      const path = this.basePath + '/api/Schema/list';
 
       let queryParameters = new URLSearchParams();
       let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+      let body : string = '';
+
       // to determine the Accept header
       let produces: string[] = [ 'application/xml', 'application/json' ];
       headers.set('Content-Type', 'application/json');
@@ -105,19 +106,20 @@ import { ApplicationStructure } from '../SchemaApi/Models/Structures/Application
       }
       );
    }
-
    private Get_WithHttpInfo(applicationName : String, extraHttpRequestParams? : any) : Observable<Response> {
 
       const path = this.basePath + '/api/Schema/detail/{applicationName}';
 
       let queryParameters = new URLSearchParams();
       let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+      let body : string = '';
 
       // to determine the Accept header
       let produces: string[] = [ 'application/xml', 'application/json' ];
       if (applicationName !== undefined) {
          queryParameters.set('applicationName', <any> applicationName);
       }
+
       headers.set('Content-Type', 'application/json');
 
       let requestOptions: RequestOptionsArgs = new RequestOptions({
@@ -134,8 +136,8 @@ import { ApplicationStructure } from '../SchemaApi/Models/Structures/Application
       return this.http.request(path, requestOptions);
    }
 
-   public Post(application : ApplicationStructure, lockId : String) : Observable<{}> {
-      return this.Post_WithHttpInfo(application, lockId)
+   public Post(application : ApplicationStructure, lockid : String) : Observable<{}> {
+      return this.Post_WithHttpInfo(application, lockid)
       .map((response: Response) =>  {
          if (response.status === 204) {
             return undefined;
@@ -146,29 +148,30 @@ import { ApplicationStructure } from '../SchemaApi/Models/Structures/Application
       }
       );
    }
+   private Post_WithHttpInfo(application : ApplicationStructure, lockid : String, extraHttpRequestParams? : any) : Observable<Response> {
 
-   private Post_WithHttpInfo(application : ApplicationStructure, lockId : String, extraHttpRequestParams? : any) : Observable<Response> {
-
-      const path = this.basePath + '/api/Schema/save';
+      const path = this.basePath + '/api/Schema/save/{lockid}';
 
       let queryParameters = new URLSearchParams();
       let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
+      let body : string = '';
 
       // to determine the Accept header
       let produces: string[] = [ 'application/xml', 'application/json' ];
       if (application !== undefined) {
-         queryParameters.set('application', <any> application);
+         body = JSON.stringify(application);
       }
-      if (lockId !== undefined) {
-         queryParameters.set('lockId', <any> lockId);
+
+      if (lockid !== undefined) {
+         queryParameters.set('lockid', <any> lockid);
       }
+
       headers.set('Content-Type', 'application/json');
 
       let requestOptions: RequestOptionsArgs = new RequestOptions({
        headers: headers,
        method: RequestMethod.Post,
-       body: body == null ? '' : JSON.stringify(body), // https://github.com/angular/angular/issues/10612
+       body: body == null ? '' : body, 
        search: queryParameters,
        withCredentials: this.configuration.withCredentials
       });
@@ -191,19 +194,20 @@ import { ApplicationStructure } from '../SchemaApi/Models/Structures/Application
       }
       );
    }
-
    private Lock_WithHttpInfo(applicationName : String, extraHttpRequestParams? : any) : Observable<Response> {
 
       const path = this.basePath + '/api/Schema/lock';
 
       let queryParameters = new URLSearchParams();
       let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+      let body : string = '';
 
       // to determine the Accept header
       let produces: string[] = [ 'application/xml', 'application/json' ];
       if (applicationName !== undefined) {
-         queryParameters.set('applicationName', <any> applicationName);
+         body = JSON.stringify(applicationName);
       }
+
       headers.set('Content-Type', 'application/json');
 
       let requestOptions: RequestOptionsArgs = new RequestOptions({
@@ -220,8 +224,8 @@ import { ApplicationStructure } from '../SchemaApi/Models/Structures/Application
       return this.http.request(path, requestOptions);
    }
 
-   public UnLock(applicationName : String) : Observable<{}> {
-      return this.UnLock_WithHttpInfo(applicationName)
+   public UnLock(applicationName : String, lockid : String) : Observable<{}> {
+      return this.UnLock_WithHttpInfo(applicationName, lockid)
       .map((response: Response) =>  {
          if (response.status === 204) {
             return undefined;
@@ -232,25 +236,76 @@ import { ApplicationStructure } from '../SchemaApi/Models/Structures/Application
       }
       );
    }
+   private UnLock_WithHttpInfo(applicationName : String, lockid : String, extraHttpRequestParams? : any) : Observable<Response> {
 
-   private UnLock_WithHttpInfo(applicationName : String, extraHttpRequestParams? : any) : Observable<Response> {
-
-      const path = this.basePath + '/api/Schema/unlock';
+      const path = this.basePath + '/api/Schema/unlock/{lockid}';
 
       let queryParameters = new URLSearchParams();
       let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+      let body : string = '';
 
       // to determine the Accept header
       let produces: string[] = [ 'application/xml', 'application/json' ];
       if (applicationName !== undefined) {
-         queryParameters.set('applicationName', <any> applicationName);
+         body = JSON.stringify(applicationName);
       }
+
+      if (lockid !== undefined) {
+         queryParameters.set('lockid', <any> lockid);
+      }
+
       headers.set('Content-Type', 'application/json');
 
       let requestOptions: RequestOptionsArgs = new RequestOptions({
        headers: headers,
        method: RequestMethod.Get,
        body:'',
+       search: queryParameters,
+       withCredentials: this.configuration.withCredentials
+      });
+
+      if (extraHttpRequestParams) {
+         requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+      }
+      return this.http.request(path, requestOptions);
+   }
+
+   public Delete(applicationName : String, lockid : String) : Observable<{}> {
+      return this.Delete_WithHttpInfo(applicationName, lockid)
+      .map((response: Response) =>  {
+         if (response.status === 204) {
+            return undefined;
+         }
+         else {
+            return response.json() || { };
+         }
+      }
+      );
+   }
+   private Delete_WithHttpInfo(applicationName : String, lockid : String, extraHttpRequestParams? : any) : Observable<Response> {
+
+      const path = this.basePath + '/api/Schema/{applicationName}/lockid';
+
+      let queryParameters = new URLSearchParams();
+      let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+      let body : string = '';
+
+      // to determine the Accept header
+      let produces: string[] = [ 'application/xml', 'application/json' ];
+      if (applicationName !== undefined) {
+         queryParameters.set('applicationName', <any> applicationName);
+      }
+
+      if (lockid !== undefined) {
+         body = JSON.stringify(lockid);
+      }
+
+      headers.set('Content-Type', 'application/json');
+
+      let requestOptions: RequestOptionsArgs = new RequestOptions({
+       headers: headers,
+       method: RequestMethod.Delete,
+       body: '',
        search: queryParameters,
        withCredentials: this.configuration.withCredentials
       });

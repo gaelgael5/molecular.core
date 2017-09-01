@@ -31,10 +31,11 @@ namespace SchemaApi.Models.Generators
             foreach (var item in this.Views)
             {
 
-                var txt = controller.RenderViewToString(engine, item.ViewName, model);
+                StringBuilder output;
+                item.Result = controller.RenderViewToString(engine, item.ViewName, model, out output);
                 controller.HttpContext.Response.ContentType = "application/text; charset=utf-8";
 
-                var reader = new StreamReader(new MemoryStream(System.Text.Encoding.UTF8.GetBytes(txt)));
+                var reader = new StreamReader(new MemoryStream(System.Text.Encoding.UTF8.GetBytes(output.ToString())));
                 while (!reader.EndOfStream)
                 {
                     var line = reader.ReadLine();
@@ -57,22 +58,27 @@ namespace SchemaApi.Models.Generators
 
         }
 
-        public void Save()
+        public string Save()
         {
+
+            StringBuilder sb = new StringBuilder();
 
             if (string.IsNullOrEmpty(this.Target))
                 throw new Exception("target folder can't be null");
 
             foreach (var item in this.Views)
             {
+
                 var p = this.Target;
 
                 if (!string.IsNullOrEmpty(item.Target))
                     p = Path.Combine(p, item.Target);
 
-                item.Save(p);
+                item.Save(p, sb);
 
             }
+
+            return sb.ToString();
 
         }
 

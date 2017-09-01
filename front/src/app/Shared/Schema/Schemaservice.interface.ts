@@ -16,10 +16,10 @@ export interface ISchema {
    [others: string]: any;
 
       /**
-      * SchemaApi.Controllers.SchemaController.GetAll (SchemaApi)
+      * SchemaApi.Controllers.SchemaController.GetList (SchemaApi)
       */
 
-      GetAll() : Observable<Array<String>>;
+      GetList() : Observable<Array<String>>;
       /**
       * SchemaApi.Controllers.SchemaController.Get (SchemaApi)
       */
@@ -29,7 +29,7 @@ export interface ISchema {
       * SchemaApi.Controllers.SchemaController.Post (SchemaApi)
       */
 
-      Post(application : ApplicationStructure, lockId : String) : Observable<{}>;
+      Post(application : ApplicationStructure, lockid : String) : Observable<{}>;
       /**
       * SchemaApi.Controllers.SchemaController.Lock (SchemaApi)
       */
@@ -39,6 +39,11 @@ export interface ISchema {
       * SchemaApi.Controllers.SchemaController.UnLock (SchemaApi)
       */
 
-      UnLock(applicationName : String) : Observable<{}>;
+      UnLock(applicationName : String, lockid : String) : Observable<{}>;
+      /**
+      * SchemaApi.Controllers.SchemaController.Delete (SchemaApi)
+      */
+
+      Delete(applicationName : String, lockid : String) : Observable<{}>;
 }
 

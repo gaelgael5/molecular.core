@@ -3,7 +3,7 @@
 * Do not edit the class manually.
 */
 
-import { StructureProperty } from '.\StructureProperty';
+import { StructureProperty } from './StructureProperty';
 import { TypeKind } from '../TypeKind';
 
 export interface StructureObject {

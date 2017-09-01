@@ -25,32 +25,15 @@ namespace SchemaApi.Controllers
         }
 
         [HttpGet("{viewName}")]
-        public string Index(string viewName)
+        public IActionResult Index(string viewName)
         {
-
-            //Scenario s = new Scenario()
-            //{
-            //    Target = @"::front",
-            //    Views = new ViewStep[]
-            //    {
-            //        new ViewStep()
-            //        {
-            //             ViewName = "angular2-typescript-service-models",
-            //        },
-            //        new ViewStep()
-            //        {
-            //             ViewName = "angular2-typescript-service-interface",
-            //        }
-            //    }
-            //};
-            //Scenarii.Instance.Save(s, "schemaApi");
-
 
             var scenario = Scenarii.Instance.Load(viewName);
             scenario.Generate(this, this.engine, _apiExplorer);
-            scenario.Save();
+            var result =  scenario.Save();
 
-            return "";
+            this.HttpContext.Response.ContentType = "text/html";
+            return this.Ok(result);
         }
 
         private readonly IApiDescriptionGroupCollectionProvider _apiExplorer;

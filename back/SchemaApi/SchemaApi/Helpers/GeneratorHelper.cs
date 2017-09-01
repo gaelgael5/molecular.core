@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace SchemaApi.Helpers
@@ -12,8 +13,9 @@ namespace SchemaApi.Helpers
     public static class GeneratorHelper
     {
 
-        public static string RenderViewToString(this Controller controller, IRazorViewEngine engine, string viewName, object model)
+        public static bool RenderViewToString(this Controller controller, IRazorViewEngine engine, string viewName, object model, out StringBuilder output)
         {
+            output = new StringBuilder();
             controller.ViewData.Model = model;
             try
             {
@@ -29,15 +31,22 @@ namespace SchemaApi.Helpers
                         Task.Yield();
 
                     if (t.IsFaulted)
-                        throw t.Exception.InnerException;
+                    {
+                        output.Append(t.Exception.InnerException.ToString());
+                        return false;
+                    }
 
-                    return sw.ToString();
+                    output.Append(sw.ToString());
+                    return true;
                 }
             }
             catch (Exception ex)
             {
-                return ex.ToString();
+               output.Append(ex.ToString());
             }
+
+            return false;
+
         }
 
 

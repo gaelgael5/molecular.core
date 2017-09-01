@@ -29,7 +29,10 @@
         {
             foreach (ApiParameterDescription p in api.ParameterDescriptions)
             {
-                repository.FindTypeToImport(p.Type, _types);
+                if (p.Type != null)
+                {
+                    repository.FindTypeToImport(p.Type, _types);
+                }
             }
 
             foreach (ApiResponseType response in api.SupportedResponseTypes)
@@ -50,7 +53,7 @@
         {
             string txt = $"Shared\\{item.Namespace.Replace(".", "\\")}\\{item.Name}.ts";
             string _path = PathBuilderHelper.GetRelativePath(System.IO.Path.Combine(@"c:\app", targetPath), System.IO.Path.Combine(@"c:\app", txt));
-            template.AddImport(template.WriteType(item), _path.Substring(0, _path.Length - 3));
+            template.AddImport(template.WriteType(item), _path);
         }
 
         template.AddEmpty();
@@ -125,7 +128,9 @@
 
                 foreach (ApiParameterDescription p in api.ParameterDescriptions)
                 {
-                    parameters.Add(new KeyValuePair<string, string>(p.Name, template.WriteType(p.Type)));
+                    string type = p.Type != null ? template.WriteType(p.Type) : "[NULL]";
+                    parameters.Add(new KeyValuePair<string, string>(p.Name, type));
+
                 }
 
                 string resultType = "Observable<{}>";
@@ -152,7 +157,51 @@
                     }
                     template.AddLine(");");
                 }
-                template.AddEmpty();
+
+
+                bool withBody = false;
+                string methodToWrite = string.Empty;
+                string bodyToWrite = string.Empty;
+                switch (api.HttpMethod)
+                {
+                    case "GET":
+                        methodToWrite = " method: RequestMethod.Get,";
+                        bodyToWrite = " body:'',";
+                        break;
+
+                    case "POST":
+                        methodToWrite = " method: RequestMethod.Post,";
+                        bodyToWrite = " body: body == null ? '' : body, ";
+                        withBody = true;
+                        break;
+
+                    case "PUT":
+                        methodToWrite = " method: RequestMethod.Put,";
+                        bodyToWrite = " body: body == null ? '' : body, ";
+                        withBody = true;
+                        break;
+
+                    case "DELETE":
+                        methodToWrite = " method: RequestMethod.Delete,";
+                        bodyToWrite = " body: '',";
+                        break;
+
+                    case "HEAD":
+                        methodToWrite = " method: RequestMethod.Head,";
+                        bodyToWrite = " body: '',";
+                        break;
+
+                    case "OPTIONS":
+                        methodToWrite = $" method: RequestMethod.Options,";
+                        bodyToWrite = " body: '',";
+                        break;
+
+                    case "PATCH":
+                        methodToWrite = " method: RequestMethod.Patch,";
+                        bodyToWrite = " body: '',";
+                        break;
+
+                }
 
                 parameters.Add(new KeyValuePair<string, string>("extraHttpRequestParams?", "any"));
                 using (var m = template.AddMethod($"{methodName}_WithHttpInfo", "Observable<Response>", parameters, RazorHelperTypescript.ExpositionEnum.Private))
@@ -163,17 +212,23 @@
                     template.AddEmpty();
                     template.AddLine($"let queryParameters = new URLSearchParams();");
                     template.AddLine($"let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845");
+                    template.AddLine($"let body : string = '';");
+
+                    template.AddEmpty();
 
                     foreach (ApiParameterDescription p in api.ParameterDescriptions)
                     {
-                        template.AddEmpty();
 
-                        if (p.ModelMetadata.IsRequired)
+                        if (p.ModelMetadata != null && p.ModelMetadata.IsRequired)
                         {
+
                             using (template.AddIf($"{p.Name} === null || {p.Name} === undefined"))
                             {
                                 template.AddLine($"throw new Error('Required parameter {p.Name} was null or undefined when calling {methodName}.');");
                             }
+
+                            template.AddEmpty();
+
                         }
 
                     }
@@ -183,11 +238,21 @@
 
                     foreach (ApiParameterDescription p in api.ParameterDescriptions)
                     {
-
                         using (template.AddIf($"{p.Name} !== undefined"))
                         {
-                            template.AddLine($"queryParameters.set('{p.Name}', <any> {p.Name});");
+
+                            if (api.RelativePath.Replace(" ", "").Contains("{" + p.Name + "}"))
+                            {
+                                template.AddLine($"queryParameters.set('{p.Name}', <any> {p.Name});");
+                            }
+                            else
+                            {
+                                template.AddLine($"body = JSON.stringify({p.Name});");
+                            }
                         }
+
+                        template.AddEmpty();
+
                     }
 
                     template.AddLine($"headers.set('Content-Type', 'application/json');");
@@ -196,47 +261,8 @@
                     template.AddLine("let requestOptions: RequestOptionsArgs = new RequestOptions({");
 
                     template.AddLine(" headers: headers,");
-                    bool withBody = false;
-                    switch (api.HttpMethod)
-                    {
-                        case "GET":
-                            template.AddLine(" method: RequestMethod.Get,");
-                            template.AddLine(" body:'',");
-                            break;
-
-                        case "POST":
-                            template.AddLine(" method: RequestMethod.Post,");
-                            template.AddLine(" body: body == null ? '' : JSON.stringify(body), // https://github.com/angular/angular/issues/10612");
-                            withBody = true;
-                            break;
-
-                        case "PUT":
-                            template.AddLine(" method: RequestMethod.Put,");
-                            template.AddLine(" body: body == null ? '' : JSON.stringify(body), // https://github.com/angular/angular/issues/10612");
-                            withBody = true;
-                            break;
-
-                        case "DELETE":
-                            template.AddLine(" method: RequestMethod.Delete,");
-                            template.AddLine(" body: '',");
-                            break;
-
-                        case "HEAD":
-                            template.AddLine(" method: RequestMethod.Head,");
-                            template.AddLine(" body: '',");
-                            break;
-
-                        case "OPTIONS":
-                            template.AddLine($" method: RequestMethod.Options,");
-                            template.AddLine(" body: '',");
-                            break;
-
-                        case "PATCH":
-                            template.AddLine(" method: RequestMethod.Patch,");
-                            template.AddLine(" body: '',");
-                            break;
-
-                    }
+                    template.AddLine(methodToWrite);
+                    template.AddLine(bodyToWrite);
                     template.AddLine(" search: queryParameters,");
                     template.AddLine(" withCredentials: this.configuration.withCredentials");
                     template.AddLine("});");

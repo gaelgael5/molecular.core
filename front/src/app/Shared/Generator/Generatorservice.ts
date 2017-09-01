@@ -55,7 +55,7 @@ import { Configuration } from '../configuration.model';
         return false;
     }
 
-   public Index(viewName : String) : Observable<String> {
+   public Index(viewName : String) : Observable<{}> {
       return this.Index_WithHttpInfo(viewName)
       .map((response: Response) =>  {
          if (response.status === 204) {
@@ -67,19 +67,20 @@ import { Configuration } from '../configuration.model';
       }
       );
    }
-
    private Index_WithHttpInfo(viewName : String, extraHttpRequestParams? : any) : Observable<Response> {
 
       const path = this.basePath + '/api/Generator/{viewName}';
 
       let queryParameters = new URLSearchParams();
       let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+      let body : string = '';
 
       // to determine the Accept header
       let produces: string[] = [ 'application/xml', 'application/json' ];
       if (viewName !== undefined) {
          queryParameters.set('viewName', <any> viewName);
       }
+
       headers.set('Content-Type', 'application/json');
 
       let requestOptions: RequestOptionsArgs = new RequestOptions({

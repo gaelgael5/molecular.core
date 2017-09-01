@@ -29,7 +29,10 @@
         {
             foreach (ApiParameterDescription p in api.ParameterDescriptions)
             {
-                repository.FindTypeToImport(p.Type, _types);
+                if (p.Type != null)
+                {
+                    repository.FindTypeToImport(p.Type, _types);
+                }
             }
 
             foreach (ApiResponseType response in api.SupportedResponseTypes)
@@ -44,7 +47,7 @@
         foreach (var item in _types)
         {
             string txt = $"Shared\\{item.Namespace.Replace(".", "\\")}\\{item.Name}.ts";
-            string _path = PathBuilderHelper.GetRelativePath(System.IO.Path.Combine(@"c:\app", targetPath), System.IO.Path.Combine(@"c:\app", txt));         
+            string _path = PathBuilderHelper.GetRelativePath(System.IO.Path.Combine(@"c:\app", targetPath), System.IO.Path.Combine(@"c:\app", txt));
             template.AddImport(template.WriteType(item), _path);
         }
 
@@ -74,7 +77,8 @@
 
                 foreach (ApiParameterDescription p in api.ParameterDescriptions)
                 {
-                    parameters.Add(new KeyValuePair<string, string>(p.Name, template.WriteType(p.Type)));
+                    string type = p.Type != null ? template.WriteType(p.Type) : "[NULL]";
+                    parameters.Add(new KeyValuePair<string, string>(p.Name, type));
                 }
 
                 string resultType = "Observable<{}>";

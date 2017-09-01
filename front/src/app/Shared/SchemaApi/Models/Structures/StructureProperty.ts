@@ -3,8 +3,8 @@
 * Do not edit the class manually.
 */
 
-import { StructureObjectReference } from '.\StructureObjectReference';
-import { StructurePropertyValidatorReference } from '.\StructurePropertyValidatorReference';
+import { StructureObjectReference } from './StructureObjectReference';
+import { StructurePropertyValidatorReference } from './StructurePropertyValidatorReference';
 
 export interface StructureProperty {
    Name: String;

@@ -12,6 +12,8 @@ using SchemaApi.Models.Environments;
 using SchemaApi.Models.Generators;
 using SchemaApi.Helpers;
 using System.IO;
+using SchemaApi.Models.Stores;
+using SchemaApi.Models;
 
 namespace SchemaApi
 {
@@ -28,27 +30,36 @@ namespace SchemaApi
 
             Configuration = builder.Build();
 
-
             var section = Configuration.GetSection("Schemas");
-            var folderName = section.GetValue<string>("FolderStructures");
-            if (string.IsNullOrEmpty(folderName))
-                folderName = @"Applications\Structures";
-            ApplicationStructures.Initialize(folderName);
 
+            var path = new DirectoryInfo(section.GetValue<string>("RootFolder"));
+            Repository.Initialize(path.FullName);
+            // ApplicationStructures.Initialize(@"Applications");
+            Repositories<Structure>.Initialize(true, null, (name) =>
+            {
+                return new Structure()
+                {
+                    Name = name,
+                    Created = DateTime.UtcNow,
+                    Updated = DateTime.UtcNow,
+                    Objects = new List<StructureObject>()
+                {
+                    new StructureObject() { Name = Constants.Types.String, Kind = TypeKind.Value },
+                    new StructureObject() { Name = Constants.Types.DateTime, Kind = TypeKind.Value },
+                    new StructureObject() { Name = Constants.Types.Integer, Kind = TypeKind.Value },
+                    new StructureObject() { Name = Constants.Types.Decimal , Kind = TypeKind.Value},
+                    new StructureObject() { Name = Constants.Types.Guid , Kind = TypeKind.Value},
+                },
 
-            folderName = section.GetValue<string>("FolderEnvironments");
-            if (string.IsNullOrEmpty(folderName))
-                folderName = @"Applications\Environments";
-            EnvironmentsConfig.Initialize(folderName);
+                };
+            });
 
+            Repositories<StoreServerData>.Initialize(false);
+            Repositories<EnvironmentConfig>.Initialize(false);
 
-            section = Configuration.GetSection("Scenarii");
-            folderName = section.GetValue<string>("Path");
-            if (string.IsNullOrEmpty(folderName))
-                folderName = @"Scenarii";
-            string targetKeyPath = Path.Combine(Directory.GetCurrentDirectory(), "TargetKeys.json");
+            string targetKeyPath = Path.Combine(Repository.Instance.Folder.Parent.FullName, "TargetKeys.json");
             List<KeyValuePair<string, string>> _paths = Serializer.LoadFile<List<KeyValuePair<string, string>>>(targetKeyPath);
-            Scenarii.Initialize(folderName, _paths);
+            Scenarii.Initialize(@"Scenarii", _paths);
 
 
         }

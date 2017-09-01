@@ -1,6 +1,10 @@
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
+using SchemaApi.Models;
+using SchemaApi.Models.Structures;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace SchemaApi.Tests
 {
@@ -14,14 +18,36 @@ namespace SchemaApi.Tests
 
             string applicationName = "appTest";
             var dirPath = Path.GetTempPath() + "temp" + Guid.NewGuid().ToString().Replace("-", "");
-            SchemaApi.Models.Structures.ApplicationStructures.Initialize(dirPath);
 
-            var i = SchemaApi.Models.Structures.ApplicationStructures.Instance;
-            i.AddApplication(applicationName);
+            Debug.WriteLine(dirPath);
 
-            var application = i.GetApplication(applicationName);
+            Repository.Initialize(dirPath);
 
-            var l = i.Lock(application.Name, "moi");
+            Repositories<Structure>.Initialize(true, null, (name) =>
+            {
+                return new Structure()
+                {
+                    Name = name,
+                    Created = DateTime.UtcNow,
+                    Updated = DateTime.UtcNow,
+                    Objects = new List<StructureObject>()
+                {
+                    new StructureObject() { Name = Constants.Types.String, Kind = TypeKind.Value },
+                    new StructureObject() { Name = Constants.Types.DateTime, Kind = TypeKind.Value },
+                    new StructureObject() { Name = Constants.Types.Integer, Kind = TypeKind.Value },
+                    new StructureObject() { Name = Constants.Types.Decimal , Kind = TypeKind.Value},
+                    new StructureObject() { Name = Constants.Types.Guid , Kind = TypeKind.Value},
+                },
+
+                };
+            });
+
+            var i = Repositories<Structure>.Instance;
+            i.Add(i.Create(applicationName), applicationName);
+
+            var application = i.Get(applicationName, applicationName);
+
+            var l = i.Lock(application.Name, "moi", applicationName);
 
             var s = new Models.Structures.StructureObject()
             {
@@ -43,9 +69,9 @@ namespace SchemaApi.Tests
 
             application.Objects.Add(s);
 
-            i.SaveApplication(application, l, "moi");
+            i.Update(application, l, "moi", applicationName);
 
-            i.Unlock(applicationName, "moi", false);
+            i.Delete(applicationName, l, "moi", applicationName);
 
         }
 
@@ -55,10 +81,39 @@ namespace SchemaApi.Tests
 
             string applicationName = "appTest";
             var dirPath = Path.GetTempPath() + "temp" + Guid.NewGuid().ToString().Replace("-", "");
-            SchemaApi.Models.Environments.EnvironmentsConfig.Initialize(dirPath);
 
-            var i = SchemaApi.Models.Environments.EnvironmentsConfig.Instance;
-            i.AddEnvironment(applicationName);
+            Debug.WriteLine(dirPath);
+
+            Repository.Initialize(dirPath);
+
+            Repositories<Structure>.Initialize(true, @"Applications", (name) =>
+            {
+                return new Structure()
+                {
+                    Name = name,
+                    Created = DateTime.UtcNow,
+                    Updated = DateTime.UtcNow,
+                    Objects = new List<StructureObject>()
+                {
+                    new StructureObject() { Name = Constants.Types.String, Kind = TypeKind.Value },
+                    new StructureObject() { Name = Constants.Types.DateTime, Kind = TypeKind.Value },
+                    new StructureObject() { Name = Constants.Types.Integer, Kind = TypeKind.Value },
+                    new StructureObject() { Name = Constants.Types.Decimal , Kind = TypeKind.Value},
+                    new StructureObject() { Name = Constants.Types.Guid , Kind = TypeKind.Value},
+                },
+
+                };
+            });
+
+            //SchemaApi.Models.Structures.ApplicationStructures.Initialize(dirPath);
+
+            //var i = Repositories<ApplicationStructure>.Instance;
+            //var i = Repositories<ApplicationStructure>.Instance;
+
+            //SchemaApi.Models.Environments.EnvironmentsConfig.Initialize(dirPath);
+
+            //var i = SchemaApi.Models.Environments.EnvironmentsConfig.Instance;
+            //i.AddEnvironment(applicationName);
 
 
 

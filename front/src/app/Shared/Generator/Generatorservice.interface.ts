@@ -18,6 +18,6 @@ export interface IGenerator {
       * SchemaApi.Controllers.GeneratorController.Index (SchemaApi)
       */
 
-      Index(viewName : String) : Observable<String>;
+      Index(viewName : String) : Observable<{}>;
 }
 

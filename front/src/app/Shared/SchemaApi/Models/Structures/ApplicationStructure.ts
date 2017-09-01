@@ -3,13 +3,13 @@
 * Do not edit the class manually.
 */
 
-import { StructureObject } from '.\StructureObject';
+import { StructureObject } from './StructureObject';
 
 export interface ApplicationStructure {
+   Objects: Array<StructureObject>;
    Name: String;
    Created: Date;
    Updated: Date;
-   Objects: Array<StructureObject>;
    UpdatedBy: String;
    Version: number;
 }

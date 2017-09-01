@@ -10,7 +10,7 @@ namespace SchemaApi.Models.Structures
 
         public string Name { get; set; }
 
-        public StructureObject ResolveStructure(ApplicationStructure application)
+        public StructureObject ResolveStructure(Structure application)
         {
             return application.Objects.FirstOrDefault(c => this.Name == c.Name);
         }
