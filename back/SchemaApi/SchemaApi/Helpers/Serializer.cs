@@ -58,7 +58,7 @@ namespace SchemaApi.Helpers
             string payload = File.ReadAllText(file, Encoding.UTF8);
             T _result = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(payload);
 
-            Debug.WriteLine($"configuration file '{file}' loaded.", "Debug");
+            Debug.WriteLine($"File '{file}' loaded.", "Debug");
 
             return _result;
 

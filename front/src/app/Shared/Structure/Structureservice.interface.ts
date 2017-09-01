@@ -8,7 +8,7 @@
 import { Headers } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import { Configuration } from '../configuration.model';
-import { ApplicationStructure } from '../SchemaApi/Models/Structures/ApplicationStructure';
+import { Structure } from '../SchemaApi/Models/Structures/Structure';
 
 export interface IStructure {
    defaultHeaders: Headers;
@@ -16,39 +16,74 @@ export interface IStructure {
    [others: string]: any;
 
       /**
+      * SchemaApi.Controllers.StructureController.ListInApplication (SchemaApi)
+      */
+
+      ListInApplication(application : String) : Observable<Array<String>>;
+      /**
       * SchemaApi.Controllers.StructureController.List (SchemaApi)
       */
 
       List() : Observable<Array<String>>;
       /**
+      * SchemaApi.Controllers.StructureController.ReadInApplication (SchemaApi)
+      */
+
+      ReadInApplication(application : String, name : String) : Observable<Structure>;
+      /**
       * SchemaApi.Controllers.StructureController.Read (SchemaApi)
       */
 
-      Read(application : String, name : String) : Observable<ApplicationStructure>;
+      Read(name : String) : Observable<Structure>;
+      /**
+      * SchemaApi.Controllers.StructureController.CreateInApplication (SchemaApi)
+      */
+
+      CreateInApplication(application : String, name : String) : Observable<{}>;
       /**
       * SchemaApi.Controllers.StructureController.Create (SchemaApi)
       */
 
-      Create(application : String, name : String) : Observable<{}>;
+      Create(name : String) : Observable<{}>;
+      /**
+      * SchemaApi.Controllers.StructureController.UpdateInApplication (SchemaApi)
+      */
+
+      UpdateInApplication(application : String, lockid : String, item : Structure) : Observable<{}>;
       /**
       * SchemaApi.Controllers.StructureController.Update (SchemaApi)
       */
 
-      Update(application : String, lockid : String, item : ApplicationStructure) : Observable<{}>;
+      Update(lockid : String, item : Structure) : Observable<{}>;
+      /**
+      * SchemaApi.Controllers.StructureController.LockInApplication (SchemaApi)
+      */
+
+      LockInApplication(application : String, name : String) : Observable<String>;
       /**
       * SchemaApi.Controllers.StructureController.Lock (SchemaApi)
       */
 
-      Lock(application : String, name : String) : Observable<String>;
+      Lock(name : String) : Observable<String>;
+      /**
+      * SchemaApi.Controllers.StructureController.UnLockInApplication (SchemaApi)
+      */
+
+      UnLockInApplication(application : String, name : String, lockid : String) : Observable<{}>;
       /**
       * SchemaApi.Controllers.StructureController.UnLock (SchemaApi)
       */
 
-      UnLock(application : String, name : String, lockid : String) : Observable<{}>;
+      UnLock(name : String, lockid : String) : Observable<{}>;
+      /**
+      * SchemaApi.Controllers.StructureController.DeleteInApplication (SchemaApi)
+      */
+
+      DeleteInApplication(application : String, name : String, lockid : String) : Observable<{}>;
       /**
       * SchemaApi.Controllers.StructureController.Delete (SchemaApi)
       */
 
-      Delete(application : String, name : String, lockid : String) : Observable<{}>;
+      Delete(name : String, lockid : String) : Observable<{}>;
 }
 

@@ -16,39 +16,74 @@ export interface IStore {
    [others: string]: any;
 
       /**
+      * SchemaApi.Controllers.StoreController.ListInApplication (SchemaApi)
+      */
+
+      ListInApplication(application : String) : Observable<Array<String>>;
+      /**
       * SchemaApi.Controllers.StoreController.List (SchemaApi)
       */
 
       List() : Observable<Array<String>>;
       /**
+      * SchemaApi.Controllers.StoreController.ReadInApplication (SchemaApi)
+      */
+
+      ReadInApplication(application : String, name : String) : Observable<StoreServerData>;
+      /**
       * SchemaApi.Controllers.StoreController.Read (SchemaApi)
       */
 
-      Read(application : String, name : String) : Observable<StoreServerData>;
+      Read(name : String) : Observable<StoreServerData>;
+      /**
+      * SchemaApi.Controllers.StoreController.CreateInApplication (SchemaApi)
+      */
+
+      CreateInApplication(application : String, name : String) : Observable<{}>;
       /**
       * SchemaApi.Controllers.StoreController.Create (SchemaApi)
       */
 
-      Create(application : String, name : String) : Observable<{}>;
+      Create(name : String) : Observable<{}>;
+      /**
+      * SchemaApi.Controllers.StoreController.UpdateInApplication (SchemaApi)
+      */
+
+      UpdateInApplication(application : String, lockid : String, item : StoreServerData) : Observable<{}>;
       /**
       * SchemaApi.Controllers.StoreController.Update (SchemaApi)
       */
 
-      Update(application : String, lockid : String, item : StoreServerData) : Observable<{}>;
+      Update(lockid : String, item : StoreServerData) : Observable<{}>;
+      /**
+      * SchemaApi.Controllers.StoreController.LockInApplication (SchemaApi)
+      */
+
+      LockInApplication(application : String, name : String) : Observable<String>;
       /**
       * SchemaApi.Controllers.StoreController.Lock (SchemaApi)
       */
 
-      Lock(application : String, name : String) : Observable<String>;
+      Lock(name : String) : Observable<String>;
+      /**
+      * SchemaApi.Controllers.StoreController.UnLockInApplication (SchemaApi)
+      */
+
+      UnLockInApplication(application : String, name : String, lockid : String) : Observable<{}>;
       /**
       * SchemaApi.Controllers.StoreController.UnLock (SchemaApi)
       */
 
-      UnLock(application : String, name : String, lockid : String) : Observable<{}>;
+      UnLock(name : String, lockid : String) : Observable<{}>;
+      /**
+      * SchemaApi.Controllers.StoreController.DeleteInApplication (SchemaApi)
+      */
+
+      DeleteInApplication(application : String, name : String, lockid : String) : Observable<{}>;
       /**
       * SchemaApi.Controllers.StoreController.Delete (SchemaApi)
       */
 
-      Delete(application : String, name : String, lockid : String) : Observable<{}>;
+      Delete(name : String, lockid : String) : Observable<{}>;
 }
 

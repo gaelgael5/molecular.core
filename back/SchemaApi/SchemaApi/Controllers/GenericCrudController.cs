@@ -68,7 +68,7 @@ namespace SchemaApi.Controllers
             try
             {
 
-                return Repositories<T>.Instance.Get(name, application);
+                return Repositories<T>.Instance.Read(name, application);
 
             }
             catch (UnauthorizedAccessException a)
@@ -89,7 +89,7 @@ namespace SchemaApi.Controllers
             try
             {
 
-                return Repositories<T>.Instance.Get(name);
+                return Repositories<T>.Instance.Read(name);
 
             }
             catch (UnauthorizedAccessException a)

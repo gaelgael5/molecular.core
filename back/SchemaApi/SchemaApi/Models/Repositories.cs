@@ -47,11 +47,12 @@ namespace SchemaApi.Models
 
     public enum EventFileEnm
     {
+        Create,
         Update,
-        Add,
-        UnLock,
         Delete,
-        Lock
+        Lock,
+        UnLock,
+        Read,
     }
 
     public class FileModelEventArgs : EventArgs
@@ -109,11 +110,11 @@ namespace SchemaApi.Models
                     };
                 };
 
-            this._datas = new Dictionary<string, T>();
+            this._datas = new Dictionary<string, box>();
 
-            string path = inApplication 
+            string path = inApplication
                 ? Path.Combine(Repository.Instance.Folder.FullName, "Applications")
-                : Path.Combine(Repository.Instance.Folder.FullName, folderName)
+                : Repository.Instance.Folder.FullName
                 ;
 
             this.folder = new DirectoryInfo(path);
@@ -164,25 +165,38 @@ namespace SchemaApi.Models
         {
             return ctor(name);
         }
-        
-        public T Get(string name, string application = null)
+
+        public T Read(string name, string application = null)
         {
 
             CheckApplication(application);
+            string _name = name.ToLower();
 
-            name = name.ToLower();
+            box box;
 
-            T result;
+            if (!this._datas.TryGetValue(_name, out box))
+                lock (this.__lock)
+                    if (!this._datas.TryGetValue(_name, out box))
+                        box = LoadItem(name, application);
 
-            if (!this._datas.TryGetValue(name, out result))
-            {
-                string file = GetFilename(name, application);
-                result = Serializer.LoadFile<T>(file);
-                this._datas.Add(name, result);
-            }
+                    else if (box.IsObsolet)
+                        box.Refresh();
 
-            return result;
 
+            if (box.IsObsolet)
+                lock (this.__lock)
+                    if (box.IsObsolet)
+                            box.Refresh();
+
+            return box.Item;
+
+        }
+
+        private box LoadItem(string name, string application)
+        {
+            box box = new box(GetFilename(name, application), application);
+            this._datas.Add(name, box);
+            return box;
         }
 
         public List<string> GetList(string application)
@@ -213,10 +227,10 @@ namespace SchemaApi.Models
             string path = GetFilename(name, application);
             File.Delete(path);
 
+            Repository.Instance.Append(path, typeof(T), application, EventFileEnm.Delete);
+
             path = GetFilename(name, application, "lock");
             File.Delete(path);
-
-            Repository.Instance.Append(path, typeof(T), application, EventFileEnm.Delete);
 
         }
 
@@ -242,6 +256,11 @@ namespace SchemaApi.Models
             Serializer.SaveFile(_lock, fileLock);
 
             Repository.Instance.Append(GetFilename(name, application), typeof(T), application, EventFileEnm.Lock);
+
+            var lock2 = Serializer.LoadFile<LockModel>(fileLock);
+
+            if (lock2.LockId != _lock.LockId)
+                throw new LockException($"{application}\\{name} is allready locked by {lock2.LockedBy}");
 
             return _lock.LockId;
 
@@ -288,7 +307,7 @@ namespace SchemaApi.Models
 
             Historize(path, item.Version);
 
-            Repository.Instance.Append(path, typeof(T), application, EventFileEnm.Add);
+            Repository.Instance.Append(path, typeof(T), application, EventFileEnm.Create);
 
             return true;
 
@@ -299,7 +318,7 @@ namespace SchemaApi.Models
 
             CheckApplication(application);
 
-            var storedItem = Get(item.Name, application);
+            var storedItem = Read(item.Name, application);
             if (storedItem.Updated > item.Updated)
                 throw new InvalidOperationException($"item {typeof(T).Name} have been changed from last the loading");
 
@@ -331,11 +350,18 @@ namespace SchemaApi.Models
         private string GetFilename(string name, string application, string suffix = null)
         {
 
-            DirectoryInfo dir = this.folder;
-            if (!string.IsNullOrEmpty(application))
-                dir = this.folder.CreateSubdirectory(application);
+            string path = string.Empty;
 
-            string path = Path.Combine(dir.FullName, FormatFilename(name, suffix));
+            DirectoryInfo dir = this.folder;
+            if (this.InApplication)
+                path = Path.Combine(dir.FullName, application, typeof(T).Name.Replace("`", "").Replace("+", "."));
+            else
+                path = Path.Combine(dir.FullName, typeof(T).Name.Replace("`", "").Replace("+", "."));
+
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+
+            path = Path.Combine(path, FormatFilename(name, suffix));
 
             return path;
 
@@ -344,17 +370,12 @@ namespace SchemaApi.Models
         private string FormatFilename(string name, string suffix = null)
         {
 
-            string result = typeof(T).Name
-                .Replace("`", "")
-                .Replace("+", ".")
-                ;
-
             if (string.IsNullOrEmpty(suffix))
                 suffix = string.Empty;
             else
                 suffix = $".{suffix}";
 
-            result = $"{name}.{result}{suffix}.json";
+            string result = $"{name}{suffix}.json";
 
             return result;
         }
@@ -416,10 +437,44 @@ namespace SchemaApi.Models
 
         }
 
+        private class box
+        {
+
+            public box(string filename, string application)
+            {
+                this.file = new FileInfo(filename);
+                this.application = application;
+                Refresh();
+                this.ReadedAt = DateTime.UtcNow;
+            }
+
+            public void Refresh()
+            {
+                this.Item = Serializer.LoadFile<T>(this.file.FullName);
+                Repository.Instance.Append(file.FullName, typeof(T), this.application, EventFileEnm.Read);
+            }
+
+            public T Item { get; private set; }
+
+            public bool IsObsolet
+            {
+                get
+                {
+                    this.file.Refresh();
+                    return this.file.LastWriteTimeUtc > this.ReadedAt;
+                }
+            }
+
+            private DateTime ReadedAt;
+            private FileInfo file;
+            private readonly string application;
+        }
+
         private static object _lock = new object();
+        private object __lock = new object();
         private readonly DirectoryInfo folder;
         private static Repositories<T> _instance;
-        private Dictionary<string, T> _datas;
+        private Dictionary<string, box> _datas;
         private readonly Func<string, T> ctor;
         private readonly FileSystemWatcher watcher;
     }
