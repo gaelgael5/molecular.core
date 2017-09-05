@@ -4,7 +4,7 @@
 */
 
 import { StructureProperty } from './StructureProperty';
-import { TypeKind } from '../TypeKind';
+import { TypeKind } from '../../../Molecular/TypeKind';
 
 export interface StructureObject {
    Name: String;

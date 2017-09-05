@@ -6,20 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using SchemaApi.Models.Structures;
 using Microsoft.Extensions.Logging;
 using SchemaApi.Models;
-using SchemaApi.Helpers;
+using Molecular.FileStore;
+using Molecular;
+using Molecular.Helpers;
 
 namespace SchemaApi.Controllers
 {
 
+    // [Produces("application/json")]
+    // [ProducesResponseType(typeof(TodoItem), 201)]
+
     [Route("api/[controller]")]
-    public class GenericCrudController<T> : Controller
+    public abstract class GenericCrudController<T> : Controller
         where T : DataModelBase, new()
     {
-
+        
         public GenericCrudController(ILogger<GenericCrudController<T>> logger)
         {
             this.logger = logger;
-            this.server = SchemaApi.Models.Constants.Roots.FirstOrDefault() ?? "http://[serverroot]/";
+            this.server = Constants.Roots.FirstOrDefault() ?? "http://[serverroot]/";            
         }
 
         [HttpGet("list/{application}")]
@@ -27,17 +32,17 @@ namespace SchemaApi.Controllers
         {
             try
             {
-                var items = Repositories<T>.Instance.GetList(application);
+                var items = Repositories<T>.Instance.Index(application);
                 return items;
             }
             catch (UnauthorizedAccessException a)
             {
-                logger.LogError(new EventId((int)ExceptionEnm.UnauthorizedAccessException), a, $" unauthorized access to execute GET '{this.server}api/list/{application}' on controller {this.GetType().Name}");
+                logger.LogError(new EventId((int)ExceptionEnm.UnauthorizedAccessException), a, $" unauthorized access to execute {this.Request.Method} '{this.Request.Path}' on controller {this.GetType().Name}");
                 throw;
             }
             catch (Exception e)
             {
-                logger.LogError(new EventId((int)ExceptionEnm.UnspecifiedException), e, $" failed to execute GET '{this.server}api/list' on controller {this.GetType().Name}");
+                logger.LogError(new EventId((int)ExceptionEnm.UnspecifiedException), e, $" failed to execute {this.Request.Method} '{this.Request.Path}' on controller {this.GetType().Name}");
                 throw;
             }
         }
@@ -47,17 +52,17 @@ namespace SchemaApi.Controllers
         {
             try
             {
-                var items = Repositories<T>.Instance.GetList(null);
+                var items = Repositories<T>.Instance.Index(null);
                 return items;
             }
             catch (UnauthorizedAccessException a)
             {
-                logger.LogError(new EventId((int)ExceptionEnm.UnauthorizedAccessException), a, $" unauthorized access to execute GET '{this.server}api/list' on controller {this.GetType().Name}");
+                logger.LogError(new EventId((int)ExceptionEnm.UnauthorizedAccessException), a, $" unauthorized access to execute {this.Request.Method} '{this.Request.Path}' on controller {this.GetType().Name}");
                 throw;
             }
             catch (Exception e)
             {
-                logger.LogError(new EventId((int)ExceptionEnm.UnspecifiedException), e, $" failed to execute GET '{this.server}api/list' on controller {this.GetType().Name}");
+                logger.LogError(new EventId((int)ExceptionEnm.UnspecifiedException), e, $" failed to execute {this.Request.Method} '{this.Request.Path}' on controller {this.GetType().Name}");
                 throw;
             }
         }
@@ -73,12 +78,12 @@ namespace SchemaApi.Controllers
             }
             catch (UnauthorizedAccessException a)
             {
-                logger.LogError(new EventId((int)ExceptionEnm.UnauthorizedAccessException), a, $" unauthorized access to execute GET '{this.server}api/read/{application}/{name}' on controller {this.GetType().Name}");
+                logger.LogError(new EventId((int)ExceptionEnm.UnauthorizedAccessException), a, $" unauthorized access to execute {this.Request.Method} '{this.Request.Path}' on controller {this.GetType().Name}");
                 throw;
             }
             catch (Exception e)
             {
-                logger.LogError(new EventId((int)ExceptionEnm.UnspecifiedException), e, $" failed to execute GET '{this.server}api/read/{application}/{name}' on controller {this.GetType().Name}");
+                logger.LogError(new EventId((int)ExceptionEnm.UnspecifiedException), e, $" failed to execute {this.Request.Method} '{this.Request.Path}' on controller {this.GetType().Name}");
                 throw;
             }
         }
@@ -94,12 +99,12 @@ namespace SchemaApi.Controllers
             }
             catch (UnauthorizedAccessException a)
             {
-                logger.LogError(new EventId((int)ExceptionEnm.UnauthorizedAccessException), a, $" unauthorized access to execute GET '{this.server}api/read/{name}' on controller {this.GetType().Name}");
+                logger.LogError(new EventId((int)ExceptionEnm.UnauthorizedAccessException), a, $" unauthorized access to execute {this.Request.Method} '{this.Request.Path}' on controller {this.GetType().Name}");
                 throw;
             }
             catch (Exception e)
             {
-                logger.LogError(new EventId((int)ExceptionEnm.UnspecifiedException), e, $" failed to execute GET '{this.server}api/read/{name}' on controller {this.GetType().Name}");
+                logger.LogError(new EventId((int)ExceptionEnm.UnspecifiedException), e, $" failed to execute {this.Request.Method} '{this.Request.Path}' on controller {this.GetType().Name}");
                 throw;
             }
         }
@@ -113,7 +118,7 @@ namespace SchemaApi.Controllers
 
                 T item = Repositories<T>.Instance.Create(name);
                 item.UpdatedBy = this.HttpContext.User.Identity.Name;
-                if (Repositories<T>.Instance.Add(item, application))
+                if (Repositories<T>.Instance.Create(item, application))
                 {
 
                 }
@@ -121,12 +126,12 @@ namespace SchemaApi.Controllers
             }
             catch (UnauthorizedAccessException a)
             {
-                logger.LogError(new EventId((int)ExceptionEnm.UnauthorizedAccessException), a, $" unauthorized access to execute GET '{this.server}api/create/{application}/{name}' on controller {this.GetType().Name}");
+                logger.LogError(new EventId((int)ExceptionEnm.UnauthorizedAccessException), a, $" unauthorized access to execute {this.Request.Method} '{this.Request.Path}' on controller {this.GetType().Name}");
                 throw;
             }
             catch (Exception e)
             {
-                logger.LogError(new EventId((int)ExceptionEnm.UnspecifiedException), e, $" failed to execute GET '{this.server}api/create/{application}/{name}' on controller {this.GetType().Name}");
+                logger.LogError(new EventId((int)ExceptionEnm.UnspecifiedException), e, $" failed to execute {this.Request.Method} '{this.Request.Path}' on controller {this.GetType().Name}");
                 throw;
             }
 
@@ -141,7 +146,7 @@ namespace SchemaApi.Controllers
 
                 T item = Repositories<T>.Instance.Create(name);
                 item.UpdatedBy = this.HttpContext.User.Identity.Name;
-                if (Repositories<T>.Instance.Add(item, name))
+                if (Repositories<T>.Instance.Create(item, name))
                 {
 
                 }
@@ -149,12 +154,12 @@ namespace SchemaApi.Controllers
             }
             catch (UnauthorizedAccessException a)
             {
-                logger.LogError(new EventId((int)ExceptionEnm.UnauthorizedAccessException), a, $" unauthorized access to execute GET '{this.server}api/create/{name}' on controller {this.GetType().Name}");
+                logger.LogError(new EventId((int)ExceptionEnm.UnauthorizedAccessException), a, $" unauthorized access to execute {this.Request.Method} '{this.Request.Path}' on controller {this.GetType().Name}");
                 throw;
             }
             catch (Exception e)
             {
-                logger.LogError(new EventId((int)ExceptionEnm.UnspecifiedException), e, $" failed to execute GET '{this.server}api/create/{name}' on controller {this.GetType().Name}");
+                logger.LogError(new EventId((int)ExceptionEnm.UnspecifiedException), e, $" failed to execute {this.Request.Method} '{this.Request.Path}' on controller {this.GetType().Name}");
                 throw;
             }
 
@@ -171,12 +176,12 @@ namespace SchemaApi.Controllers
             }
             catch (UnauthorizedAccessException a)
             {
-                logger.LogError(new EventId((int)ExceptionEnm.UnauthorizedAccessException), a, $" unauthorized access to execute POST '{this.server}api/update/{application}/{lockid}' on controller {this.GetType().Name}");
+                logger.LogError(new EventId((int)ExceptionEnm.UnauthorizedAccessException), a, $" unauthorized access to execute {this.Request.Method} '{this.Request.Path}' on controller {this.GetType().Name}");
                 throw;
             }
             catch (Exception e)
             {
-                logger.LogError(new EventId((int)ExceptionEnm.UnspecifiedException), e, $" failed to execute POST '{this.server}api/update/{application}/{lockid}' on controller {this.GetType().Name}");
+                logger.LogError(new EventId((int)ExceptionEnm.UnspecifiedException), e, $" failed to execute {this.Request.Method} '{this.Request.Path}' on controller {this.GetType().Name}");
                 throw;
             }
         }
@@ -191,12 +196,12 @@ namespace SchemaApi.Controllers
             }
             catch (UnauthorizedAccessException a)
             {
-                logger.LogError(new EventId((int)ExceptionEnm.UnauthorizedAccessException), a, $" unauthorized access to execute POST '{this.server}api/update/{lockid}' on controller {this.GetType().Name}");
+                logger.LogError(new EventId((int)ExceptionEnm.UnauthorizedAccessException), a, $" unauthorized access to execute {this.Request.Method} '{this.Request.Path}' on controller {this.GetType().Name}");
                 throw;
             }
             catch (Exception e)
             {
-                logger.LogError(new EventId((int)ExceptionEnm.UnspecifiedException), e, $" failed to execute POST '{this.server}api/update/{lockid}' on controller {this.GetType().Name}");
+                logger.LogError(new EventId((int)ExceptionEnm.UnspecifiedException), e, $" failed to execute {this.Request.Method} '{this.Request.Path}' on controller {this.GetType().Name}");
                 throw;
             }
         }
@@ -211,12 +216,12 @@ namespace SchemaApi.Controllers
             }
             catch (UnauthorizedAccessException a)
             {
-                logger.LogError(new EventId((int)ExceptionEnm.UnauthorizedAccessException), a, $" unauthorized access to execute GET '{this.server}api/lock/{application}/{name}' on controller {this.GetType().Name}");
+                logger.LogError(new EventId((int)ExceptionEnm.UnauthorizedAccessException), a, $" unauthorized access to execute {this.Request.Method} '{this.Request.Path}' on controller {this.GetType().Name}");
                 throw;
             }
             catch (Exception e)
             {
-                logger.LogError(new EventId((int)ExceptionEnm.UnspecifiedException), e, $" failed to execute GET '{this.server}api/lock/{application}/{name}' on controller {this.GetType().Name}");
+                logger.LogError(new EventId((int)ExceptionEnm.UnspecifiedException), e, $" failed to execute {this.Request.Method} '{this.Request.Path}' on controller {this.GetType().Name}");
                 throw;
             }
         }
@@ -231,12 +236,12 @@ namespace SchemaApi.Controllers
             }
             catch (UnauthorizedAccessException a)
             {
-                logger.LogError(new EventId((int)ExceptionEnm.UnauthorizedAccessException), a, $" unauthorized access to execute GET '{this.server}api/lock/{name}' on controller {this.GetType().Name}");
+                logger.LogError(new EventId((int)ExceptionEnm.UnauthorizedAccessException), a, $" unauthorized access to execute {this.Request.Method} '{this.Request.Path}' on controller {this.GetType().Name}");
                 throw;
             }
             catch (Exception e)
             {
-                logger.LogError(new EventId((int)ExceptionEnm.UnspecifiedException), e, $" failed to execute GET '{this.server}api/lock/{name}' on controller {this.GetType().Name}");
+                logger.LogError(new EventId((int)ExceptionEnm.UnspecifiedException), e, $" failed to execute {this.Request.Method} '{this.Request.Path}' on controller {this.GetType().Name}");
                 throw;
             }
         }
@@ -251,12 +256,12 @@ namespace SchemaApi.Controllers
             }
             catch (UnauthorizedAccessException a)
             {
-                logger.LogError(new EventId((int)ExceptionEnm.UnauthorizedAccessException), a, $" unauthorized access to execute GET '{this.server}api/unlock/{application}/{name}/{lockid}' on controller {this.GetType().Name}");
+                logger.LogError(new EventId((int)ExceptionEnm.UnauthorizedAccessException), a, $" unauthorized access to execute {this.Request.Method} '{this.Request.Path}' on controller {this.GetType().Name}");
                 throw;
             }
             catch (Exception e)
             {
-                logger.LogError(new EventId((int)ExceptionEnm.UnspecifiedException), e, $" failed to execute GET '{this.server}api/unlock/{application}/{name}/{lockid}' on controller {this.GetType().Name}");
+                logger.LogError(new EventId((int)ExceptionEnm.UnspecifiedException), e, $" failed to execute {this.Request.Method} '{this.Request.Path}' on controller {this.GetType().Name}");
                 throw;
             }
         }
@@ -271,12 +276,12 @@ namespace SchemaApi.Controllers
             }
             catch (UnauthorizedAccessException a)
             {
-                logger.LogError(new EventId((int)ExceptionEnm.UnauthorizedAccessException), a, $" unauthorized access to execute GET '{this.server}api/unlock/{name}/{lockid}' on controller {this.GetType().Name}");
+                logger.LogError(new EventId((int)ExceptionEnm.UnauthorizedAccessException), a, $" unauthorized access to execute {this.Request.Method} '{this.Request.Path}' on controller {this.GetType().Name}");
                 throw;
             }
             catch (Exception e)
             {
-                logger.LogError(new EventId((int)ExceptionEnm.UnspecifiedException), e, $" failed to execute GET '{this.server}api/unlock/{name}/{lockid}' on controller {this.GetType().Name}");
+                logger.LogError(new EventId((int)ExceptionEnm.UnspecifiedException), e, $" failed to execute {this.Request.Method} '{this.Request.Path}' on controller {this.GetType().Name}");
                 throw;
             }
         }
@@ -291,12 +296,12 @@ namespace SchemaApi.Controllers
             }
             catch (UnauthorizedAccessException a)
             {
-                logger.LogError(new EventId((int)ExceptionEnm.UnauthorizedAccessException), a, $" unauthorized access to execute DELETE '{this.server}api/{application}/{name}/{lockid}' on controller {this.GetType().Name}");
+                logger.LogError(new EventId((int)ExceptionEnm.UnauthorizedAccessException), a, $" unauthorized access to execute {this.Request.Method} '{this.Request.Path}' on controller {this.GetType().Name}");
                 throw;
             }
             catch (Exception e)
             {
-                logger.LogError(new EventId((int)ExceptionEnm.UnspecifiedException), e, $" failed to execute DELETE '{this.server}api/{application}/{name}/{lockid}' on controller {this.GetType().Name}");
+                logger.LogError(new EventId((int)ExceptionEnm.UnspecifiedException), e, $" failed to execute {this.Request.Method} '{this.Request.Path}' on controller {this.GetType().Name}");
                 throw;
             }
         }
@@ -311,21 +316,19 @@ namespace SchemaApi.Controllers
             }
             catch (UnauthorizedAccessException a)
             {
-                logger.LogError(new EventId((int)ExceptionEnm.UnauthorizedAccessException), a, $" unauthorized access to execute DELETE '{this.server}api/{name}/{lockid}' on controller {this.GetType().Name}");
+                logger.LogError(new EventId((int)ExceptionEnm.UnauthorizedAccessException), a, $" unauthorized access to execute {this.Request.Method} '{this.Request.Path}' on controller {this.GetType().Name}");
                 throw;
             }
             catch (Exception e)
             {
-                logger.LogError(new EventId((int)ExceptionEnm.UnspecifiedException), e, $" failed to execute DELETE '{this.server}api/{name}/{lockid}' on controller {this.GetType().Name}");
+                logger.LogError(new EventId((int)ExceptionEnm.UnspecifiedException), e, $" failed to execute {this.Request.Method} '{this.Request.Path}' on controller {this.GetType().Name}");
                 throw;
             }
         }
 
 
-
-
-
         private readonly ILogger<GenericCrudController<T>> logger;
         private readonly string server;
+
     }
 }

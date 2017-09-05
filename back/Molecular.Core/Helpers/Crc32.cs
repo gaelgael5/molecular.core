@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bb.Sdk.Helpers
+namespace Molecular.Helpers
 {
 
 

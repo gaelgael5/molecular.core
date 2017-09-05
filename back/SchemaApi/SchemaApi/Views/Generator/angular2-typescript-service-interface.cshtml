@@ -1,6 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Mvc.ApiExplorer;
-@using SchemaApi.Helpers;
+@using Molecular.Helpers;
 @using SchemaApi.Models.Generators;
+@using System.Linq;
+
 @model IApiDescriptionGroupCollectionProvider
 @{
 
@@ -8,10 +10,20 @@
     var template = new RazorHelperTypescript(this);
     TypeDiscoverRepository repository = new TypeDiscoverRepository(Model);
 
+    List<ApiDescription> _apis = new List<ApiDescription>();
     foreach (ApiDescriptionGroup group in Model.ApiDescriptionGroups.Items)
     {
+        foreach (Microsoft.AspNetCore.Mvc.ApiExplorer.ApiDescription api in group.Items)
+        {
+            _apis.Add(api);
+        }
+    }
+    var apis = _apis.ToLookup(c => (c.ActionDescriptor as Microsoft.AspNetCore.Mvc.Controllers.ControllerActionDescriptor).ControllerName);
 
-        string name = group.GroupName.Replace("Controller", "");
+    foreach (var group in apis)
+    {
+
+        string name = group.Key;
         string targetPath = $"Shared\\{name}\\{name}service.interface.ts";
 
         template.AddStartComment();
@@ -25,7 +37,7 @@
         // Imports
         HashSet<Type> _types = new HashSet<Type>();
 
-        foreach (ApiDescription api in group.Items)
+        foreach (ApiDescription api in group)
         {
             foreach (ApiParameterDescription p in api.ParameterDescriptions)
             {
@@ -61,7 +73,7 @@
             template.AddLine("[others: string]: any;");
             template.AddEmpty();
 
-            foreach (ApiDescription api in group.Items)
+            foreach (ApiDescription api in group)
             {
 
                 var nn = api.ActionDescriptor.DisplayName.Split('(')[0].Split('.');

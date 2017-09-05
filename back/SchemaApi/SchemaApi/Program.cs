@@ -6,41 +6,56 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server.Features;
+using Molecular;
 
 namespace SchemaApi
 {
     public class Program
     {
+
+        public static Program Instance { get; private set; }
+
+        public bool Canceled { get; private set; }
+
         public static void Main(string[] args)
         {
-            var host = new WebHostBuilder()
+
+            Program.Instance = new Program();
+
+            Program.Instance.Start(args);
+
+        }
+
+        private void Start(string[] args)
+        {
+
+            string initialDirectory = Directory.GetCurrentDirectory();
+
+            if (args.Length == 1)
+                initialDirectory = args[0];
+
+            this.host = new WebHostBuilder()
                 .UseKestrel()
-                .UseContentRoot(Directory.GetCurrentDirectory())
+                .UseContentRoot(initialDirectory)
                 .UseStartup<Startup>()
                 // .UseApplicationInsights()
-                // .ConfigureLogging()                
+                //.ConfigureLogging()                
                 .Build();
 
-            TraceHostListener(host);
-
-            // Microsoft.AspNetCore.Mvc.ViewEngines.ICompositeViewEngine}, ImplementationType = {Microsoft.AspNetCore.Mvc.ViewEngines.CompositeViewEngine
-            // Microsoft.AspNetCore.Mvc.Razor.IRazorViewEngine}, ImplementationType = {Microsoft.AspNetCore.Mvc.Razor.RazorViewEngine
-            // Microsoft.AspNetCore.Mvc.Razor.IRazorPageFactoryProvider}, ImplementationType = {Microsoft.AspNetCore.Mvc.Razor.Internal.DefaultRazorPageFactoryProvider
-            // Microsoft.AspNetCore.Mvc.Razor.Compilation.IRazorCompilationService}, ImplementationType = {Microsoft.AspNetCore.Mvc.Razor.Internal.RazorCompilationService
-
-            host.Run();
-
-        }
-
-        private static void TraceHostListener(IWebHost host)
-        {
-            var serverAddress = host.ServerFeatures.FirstOrDefault(c => c.Key == typeof(IServerAddressesFeature)).Value;
-            if (serverAddress != null)
-                foreach (var item in (serverAddress as IServerAddressesFeature).Addresses)
+            if (args.Length == 1)
+                this.task = Task.Run(() =>
                 {
-                    System.Diagnostics.Debug.WriteLine($"exposed to {item}");
-                    SchemaApi.Models.Constants.Roots.Add(item);
-                }
+                    host.Run();
+                });
+
+            else
+                host.Run();
+
         }
+
+
+        private IWebHost host;
+        public Task task;
+
     }
 }

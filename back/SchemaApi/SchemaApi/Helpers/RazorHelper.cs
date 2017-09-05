@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Collections;
 
-namespace SchemaApi.Helpers
+namespace Molecular.Helpers
 {
 
     public class RazorHelperTypescript

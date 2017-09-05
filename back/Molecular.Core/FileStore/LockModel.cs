@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SchemaApi.Models.Structures
+namespace Molecular.FileStore
 {
     public class LockModel
     {

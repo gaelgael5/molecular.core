@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SchemaApi.Models
+namespace Molecular
 {
     public static class Constants
     {
@@ -14,6 +14,13 @@ namespace SchemaApi.Models
         }
 
         public static List<string> Roots { get; private set; }
+
+        public static class Logs
+        {
+
+            public static readonly string Debug = "Debug";
+
+        }
 
         public static class Roles
         {

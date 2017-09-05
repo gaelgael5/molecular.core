@@ -7,14 +7,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Razor;
 using System.IO;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
-using SchemaApi.Helpers;
 using SchemaApi.Models.Generators;
 
 namespace SchemaApi.Controllers
 {
 
+
     [Route("api/[controller]")]
-    [ApiExplorerSettings(IgnoreApi = false, GroupName = nameof(GeneratorController))]
     public class GeneratorController : Controller
     {
 

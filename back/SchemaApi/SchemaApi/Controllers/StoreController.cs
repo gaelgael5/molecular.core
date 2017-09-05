@@ -11,7 +11,7 @@ using SchemaApi.Models.Stores;
 namespace SchemaApi.Controllers
 {
 
-    [ApiExplorerSettings(IgnoreApi = false, GroupName = nameof(StoreController))]
+    //[ApiExplorerSettings(IgnoreApi = false, GroupName = nameof(StoreController))]
     public class StoreController : GenericCrudController<StoreServerData>
     {
 

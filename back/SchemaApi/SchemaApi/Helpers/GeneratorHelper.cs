@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SchemaApi.Helpers
+namespace Molecular.Helpers
 {
     public static class GeneratorHelper
     {

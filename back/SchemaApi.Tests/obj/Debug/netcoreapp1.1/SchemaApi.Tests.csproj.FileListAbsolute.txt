@@ -42,3 +42,5 @@ C:\_d\src\molecular.core\back\SchemaApi.Tests\obj\Debug\netcoreapp1.1\SchemaApi.
 C:\_d\src\molecular.core\back\SchemaApi.Tests\obj\Debug\netcoreapp1.1\SchemaApi.Tests.AssemblyInfo.cs
 C:\_d\src\molecular.core\back\SchemaApi.Tests\obj\Debug\netcoreapp1.1\SchemaApi.Tests.dll
 C:\_d\src\molecular.core\back\SchemaApi.Tests\obj\Debug\netcoreapp1.1\SchemaApi.Tests.pdb
+C:\_d\src\molecular.core\back\SchemaApi.Tests\bin\Debug\netcoreapp1.1\Molecular.Core.dll
+C:\_d\src\molecular.core\back\SchemaApi.Tests\bin\Debug\netcoreapp1.1\Molecular.Core.pdb

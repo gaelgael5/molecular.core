@@ -7,7 +7,7 @@ using SchemaApi.Models.Generators;
 namespace SchemaApi.Tests
 {
     [TestClass]
-    public class UnitTest2
+    public class DiscoveryUnitTest
     {
 
         [TestMethod]

@@ -9,6 +9,8 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchemaApi.Tests", "..\SchemaApi.Tests\SchemaApi.Tests.csproj", "{C4EEDF5E-0D17-414E-BE66-59C7746E62D8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Molecular.Core", "..\Molecular.Core\Molecular.Core.csproj", "{C8ED039B-EB77-4C81-8CFD-0CE641AD8A85}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{C4EEDF5E-0D17-414E-BE66-59C7746E62D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C4EEDF5E-0D17-414E-BE66-59C7746E62D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C4EEDF5E-0D17-414E-BE66-59C7746E62D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8ED039B-EB77-4C81-8CFD-0CE641AD8A85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8ED039B-EB77-4C81-8CFD-0CE641AD8A85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8ED039B-EB77-4C81-8CFD-0CE641AD8A85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8ED039B-EB77-4C81-8CFD-0CE641AD8A85}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
