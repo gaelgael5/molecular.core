@@ -22,7 +22,7 @@ namespace SchemaApi.Controllers
     /// <typeparam name="T"></typeparam>
     /// <seealso cref="Microsoft.AspNetCore.Mvc.Controller" />
     [Route("api/[controller]")]
-    public abstract class GenericCrudController<T> : Controller
+    public abstract class GenericCrudInApplicationController<T> : Controller
         where T : DataModelBase, new()
     {
 
@@ -30,21 +30,22 @@ namespace SchemaApi.Controllers
         /// Initializes a new instance of the <see cref="GenericCrudController{T}"/> class.
         /// </summary>
         /// <param name="logger">The logger.</param>
-        public GenericCrudController(ILogger<GenericCrudController<T>> logger)
+        public GenericCrudInApplicationController(ILogger<GenericCrudInApplicationController<T>> logger)
         {
             this.logger = logger;
         }
-
+        
         /// <summary>
-        /// Indexes of stored items.
+        /// Item's list stored on disk
         /// </summary>
+        /// <param name="application">The application.</param>
         /// <returns></returns>
-        [HttpGet("index")]
-        public IndexModelList Index()
+        [HttpGet("index/{application}")]
+        public IndexModelList Index(string application)
         {
             try
             {
-                var items = Repositories<T>.Instance.Index(null);
+                var items = Repositories<T>.Instance.Index(application);
                 return items;
             }
             catch (UnauthorizedAccessException a)
@@ -60,17 +61,18 @@ namespace SchemaApi.Controllers
         }
 
         /// <summary>
-        /// Reads item by the specified name.
+        /// read the specified item
         /// </summary>
-        /// <param name="name">name is the name pprperty of the item you want accessing.</param>
+        /// <param name="application">path where the model is stored</param>
+        /// <param name="name">name of the model</param>
         /// <returns></returns>
-        [HttpGet("read/{name}")]
-        public T Read(string name)
+        [HttpGet("read/{application}/{name}")]
+        public T Read(string application, string name)
         {
             try
             {
 
-                return Repositories<T>.Instance.Read(name);
+                return Repositories<T>.Instance.Read(name, application);
 
             }
             catch (UnauthorizedAccessException a)
@@ -86,11 +88,12 @@ namespace SchemaApi.Controllers
         }
 
         /// <summary>
-        /// Creates empty item by specified name.
+        /// Create a new empty item with the specified for key
         /// </summary>
+        /// <param name="application"></param>
         /// <param name="name">name is the name pprperty of the item you want accessing.</param>
-        [HttpGet("create/{name}")]
-        public void Create(string name)
+        [HttpGet("create/{application}/{name}")]
+        public void Create(string application, string name)
         {
 
             try
@@ -98,7 +101,7 @@ namespace SchemaApi.Controllers
 
                 T item = Repositories<T>.Instance.Create(name);
                 item.UpdatedBy = this.HttpContext.User.Identity.Name;
-                if (Repositories<T>.Instance.Create(item, name))
+                if (Repositories<T>.Instance.Create(item, application))
                 {
 
                 }
@@ -118,17 +121,18 @@ namespace SchemaApi.Controllers
         }
 
         /// <summary>
-        /// Updates the specified item.
+        /// Update the specifed item
         /// </summary>
+        /// <param name="application">path where the model is stored</param>
         /// <param name="lockid">unique lockid that the method lock has returned.</param>
-        /// <param name="item">The item.</param>
-        [HttpPost("update/{lockid}")]
-        public void Update(string lockid, [FromBody]T item)
+        /// <param name="item"></param>
+        [HttpPost("update/{application}/{lockid}")]
+        public void Update(string application, string lockid, [FromBody]T item)
         {
             try
             {
                 string userName = this.HttpContext.User.Identity.Name;
-                Repositories<T>.Instance.Update(item, lockid, userName);
+                Repositories<T>.Instance.Update(item, lockid, userName, application);
             }
             catch (UnauthorizedAccessException a)
             {
@@ -145,15 +149,16 @@ namespace SchemaApi.Controllers
         /// <summary>
         /// Locks item for the specified name.
         /// </summary>
+        /// <param name="application">path where the model is stored</param>
         /// <param name="name">name is the name pprperty of the item you want accessing.</param>
         /// <returns>method return a unique lockid that you must return with method that change model</returns>
-        [HttpGet("lock/{name}")]
-        public string Lock(string name)
+        [HttpGet("lock/{application}/{name}")]
+        public string Lock(string application, string name)
         {
             try
             {
                 string userName = this.HttpContext.User.Identity.Name;
-                return Repositories<T>.Instance.Lock(name, userName);
+                return Repositories<T>.Instance.Lock(name, userName, application);
             }
             catch (UnauthorizedAccessException a)
             {
@@ -168,17 +173,19 @@ namespace SchemaApi.Controllers
         }
 
         /// <summary>
-        /// Unlocks the specified name.
+        /// unlock specifed item.
+        /// if lock id is null you must be Administrator
         /// </summary>
+        /// <param name="application">path where the model is stored</param>
         /// <param name="name">name is the name pprperty of the item you want accessing.</param>
         /// <param name="lockid">unique lockid that the method lock has returned.</param>
-        [HttpGet("unlock/{name}/{lockid}")]
-        public void Unlock(string name, string lockid)
+        [HttpGet("unlock/{application}/{name}/{lockid}")]
+        public void Unlock(string application, string name, string lockid)
         {
             try
             {
                 string userName = this.HttpContext.User.Identity.Name;
-                Repositories<T>.Instance.Unlock(name, lockid, userName, this.HttpContext.User.IsInRole(Constants.Roles.Administrator));
+                Repositories<T>.Instance.Unlock(name, lockid, userName, this.HttpContext.User.IsInRole(Constants.Roles.Administrator), application);
             }
             catch (UnauthorizedAccessException a)
             {
@@ -193,17 +200,18 @@ namespace SchemaApi.Controllers
         }
 
         /// <summary>
-        /// Deletes the specified name.
+        /// delete item by specified name
         /// </summary>
+        /// <param name="application">path where the model is stored</param>
         /// <param name="name">name is the name pprperty of the item you want accessing.</param>
         /// <param name="lockid">unique lockid that the method lock has returned.</param>
-        [HttpDelete("{name}/{lockid}")]
-        public void Delete(string name, string lockid)
+        [HttpDelete("{application}/{name}/{lockid}")]
+        public void Delete(string application, string name, string lockid)
         {
             try
             {
                 string userName = this.HttpContext.User.Identity.Name;
-                Repositories<T>.Instance.Delete(name, lockid, userName);
+                Repositories<T>.Instance.Delete(name, lockid, userName, application);
             }
             catch (UnauthorizedAccessException a)
             {
@@ -217,7 +225,7 @@ namespace SchemaApi.Controllers
             }
         }
 
-        private readonly ILogger<GenericCrudController<T>> logger;
+        private readonly ILogger<GenericCrudInApplicationController<T>> logger;
 
     }
 }

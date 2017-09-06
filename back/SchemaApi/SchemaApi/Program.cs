@@ -10,13 +10,33 @@ using Molecular;
 
 namespace SchemaApi
 {
+
+    /// <summary>
+    /// Entry program class
+    /// </summary>
     public class Program
     {
 
+        /// <summary>
+        /// Gets the instance.
+        /// </summary>
+        /// <value>
+        /// The instance.
+        /// </value>
         public static Program Instance { get; private set; }
 
+        /// <summary>
+        /// Gets a value indicating whether this <see cref="Program"/> is canceled.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if canceled; otherwise, <c>false</c>.
+        /// </value>
         public bool Canceled { get; private set; }
 
+        /// <summary>
+        /// Mains of the program with specified arguments.
+        /// </summary>
+        /// <param name="args">The arguments.</param>
         public static void Main(string[] args)
         {
 
@@ -55,6 +75,9 @@ namespace SchemaApi
 
 
         private IWebHost host;
+        /// <summary>
+        /// The task
+        /// </summary>
         public Task task;
 
     }

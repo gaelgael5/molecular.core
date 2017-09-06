@@ -91,10 +91,10 @@ namespace Molecular.FileStore
             {
 
                 IndexModelList items;
-                path = GetFilename(item.Name, application);
+                path = GetFilename(item.Name, application, null);
                 Serializer.SaveFile(item, path);
 
-                string pathIndex = GetFilename("__index", application);
+                string pathIndex = GetFilename("__index", application, null);
                 if (File.Exists(pathIndex))
                     items = Serializer.LoadFile<IndexModelList>(pathIndex);
                 else
@@ -138,7 +138,7 @@ namespace Molecular.FileStore
             if (!this._datas.TryGetValue(_name, out box))
                 lock (this.__lock)
                     if (!this._datas.TryGetValue(_name, out box))
-                        box = LoadItem(name, application);
+                        box = LoadItem<TItem>(_name, application);
 
                     else if (box.IsObsolet)
                         box.Refresh();
@@ -149,22 +149,35 @@ namespace Molecular.FileStore
                     if (box.IsObsolet)
                         box.Refresh();
 
-            return box.Item;
+            return (box as box<TItem>).Item;
 
         }
 
-        public List<string> Index(string application)
+        public IndexModelList Index(string application)
         {
 
+            string _name = "__index";
             CheckApplication(application);
 
-            var files = folder.GetFiles(".json")
-                .OfType<FileInfo>()
-                .Select(c => c.Name.Substring(0, c.Name.Length - 5));
+            box box;
 
-            List<string> result = files.ToList();
+            if (!this._datas.TryGetValue(_name, out box))
+                lock (this.__lock)
+                    if (!this._datas.TryGetValue(_name, out box))
+                        box = LoadItem<IndexModelList>(_name, application);
 
-            return result;
+                    else if (box.IsObsolet)
+                        box.Refresh();
+
+
+            if (box.IsObsolet)
+                lock (this.__lock)
+                    if (box.IsObsolet)
+                        box.Refresh();
+
+            box<IndexModelList> _box = box as box<IndexModelList>;
+
+            return _box.Item;
 
         }
 
@@ -178,7 +191,7 @@ namespace Molecular.FileStore
 
             CheckLock(name, lockId, userName, application);
 
-            string path = GetFilename(name, application);
+            string path = GetFilename(name, application, null);
             File.Delete(path);
 
             Repository.Instance.Append(path, typeof(TItem), application, EventFileEnm.Delete);
@@ -209,7 +222,7 @@ namespace Molecular.FileStore
 
             _lock.SaveFileWithLock(fileLock);
 
-            Repository.Instance.Append(GetFilename(name, application), typeof(TItem), application, EventFileEnm.Lock);
+            Repository.Instance.Append(GetFilename(name, application, null), typeof(TItem), application, EventFileEnm.Lock);
 
             return _lock.LockId;
 
@@ -226,7 +239,7 @@ namespace Molecular.FileStore
 
             File.Delete(fileLock);
 
-            Repository.Instance.Append(GetFilename(name, application), typeof(TItem), application, EventFileEnm.UnLock);
+            Repository.Instance.Append(GetFilename(name, application, null), typeof(TItem), application, EventFileEnm.UnLock);
 
         }
 
@@ -245,7 +258,7 @@ namespace Molecular.FileStore
             item.UpdatedBy = userName;
             item.Version++;
 
-            string path = GetFilename(item.Name, application);
+            string path = GetFilename(item.Name, application, null);
             Serializer.SaveFile<TItem>(item, path);
 
             Historize(path, item.Version);
@@ -271,9 +284,9 @@ namespace Molecular.FileStore
 
         #region private 
 
-        private box LoadItem(string name, string application)
+        private box<T> LoadItem<T>(string name, string application)
         {
-            box box = new box(GetFilename(name, application), application);
+            box<T> box = new box<T>(GetFilename(name, application, null), application);
             this._datas.Add(name, box);
             return box;
         }
@@ -287,7 +300,7 @@ namespace Molecular.FileStore
                 throw new InvalidOperationException($"type {typeof(TItem).Name} is not in application");
         }
 
-        public string GetFilename(string name, string application, string suffix = null)
+        public string GetFilename(string name, string application, string suffix)
         {
 
             string path = string.Empty;
@@ -364,7 +377,7 @@ namespace Molecular.FileStore
 
         }
 
-        private class box
+        private abstract class box
         {
 
             public box(string filename, string application)
@@ -372,16 +385,7 @@ namespace Molecular.FileStore
                 this.file = new FileInfo(filename);
                 this.application = application;
                 Refresh();
-                this.ReadedAt = DateTime.UtcNow;
             }
-
-            public void Refresh()
-            {
-                this.Item = Serializer.LoadFile<TItem>(this.file.FullName);
-                Repository.Instance.Append(file.FullName, typeof(TItem), this.application, EventFileEnm.Read);
-            }
-
-            public TItem Item { get; private set; }
 
             public bool IsObsolet
             {
@@ -392,9 +396,31 @@ namespace Molecular.FileStore
                 }
             }
 
-            private DateTime ReadedAt;
-            private FileInfo file;
-            private readonly string application;
+            public abstract void Refresh();
+
+            protected DateTime ReadedAt;
+            protected readonly FileInfo file;
+            protected readonly string application;
+
+        }
+
+        private class box<T> : box
+        {
+
+            public box(string filename, string application) 
+                : base (filename, application)
+            {
+            }
+
+            public override void Refresh()
+            {
+                this.Item = Serializer.LoadFile<T>(this.file.FullName);
+                Repository.Instance.Append(file.FullName, typeof(TItem), this.application, EventFileEnm.Read);
+                this.ReadedAt = DateTime.UtcNow;
+            }
+
+            public T Item { get; private set; }           
+
         }
 
         private static object _lock = new object();
