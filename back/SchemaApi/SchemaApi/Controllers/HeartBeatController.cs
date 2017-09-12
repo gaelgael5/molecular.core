@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Molecular;
 using Molecular.Helpers;
+using SchemaApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +12,18 @@ namespace SchemaApi.Controllers
 {
 
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <seealso cref="Microsoft.AspNetCore.Mvc.Controller" />
     [Route("api/[controller]")]
     public class HeartBeatController : Controller
     {
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HeartBeatController"/> class.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
         public HeartBeatController(ILogger<HeartBeatController> logger)
         {
             this.logger = logger;
@@ -22,11 +31,16 @@ namespace SchemaApi.Controllers
         }
 
 
+        /// <summary>
+        /// Checks the specified key.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns></returns>
         [HttpGet("{key}")]
-        public List<KeyValuePair<string, string>> Check(string key)
+        public HeartbeatResponseList Check(string key)
         {
 
-            List<KeyValuePair<string, string>> result = new List<KeyValuePair<string, string>>();
+            HeartbeatResponseList result = new HeartbeatResponseList();
 
             try
             {

@@ -4,3 +4,41 @@ WORKDIR /app
 EXPOSE 80
 COPY ${source:-obj/Docker/publish} .
 ENTRYPOINT ["dotnet", "SchemaApi.dll"]
+
+
+
+
+
+
+FROM microsoft/windowsservercore
+ARG source
+
+WORKDIR /app/watchings
+WORKDIR /app/Configurations
+WORKDIR /app/Logs
+WORKDIR /app/Outputs
+
+WORKDIR /app
+COPY ./bin/Debug/*.exe ./
+COPY ./bin/Debug/*.dll ./
+COPY ./bin/Debug/*.pdb ./
+COPY ./bin/Debug/*.xml ./
+COPY ./bin/Debug/*.manifest ./
+COPY ./bin/Debug/*.xml ./
+COPY ./bin/Debug/*.config ./
+
+# quand ca fonctionnera il faudra mettre le point d'entrée
+# ENTRYPOINT ["Pssa.Parcels.Read.exe", "-config", "configurations\config.json"]
+
+# start machine
+
+# en local
+# docker run -v c:\temps\config:c:\app\configurations -v c:\temps\watchings:c:\app\watchings -v c:\temps\Logs:c:\app\Logs -v c:\temps\Outputs:c:\app\Outputs -ti reader_file
+
+# à distance
+# docker -H tcp://10.137.64.29:45001 run -v c:\temps\config:c:\app\configurations -v c:\temps\watchings:c:\app\watchings -v c:\temps\Logs:c:\app\Logs -v c:\temps\Outputs:c:\app\Outputs -ti reader_file
+
+# run process
+# Pssa.Parcels.Read.exe -config c:\app\configurations\config-file.json
+# Pssa.Parcels.Read.exe -config c:\app\configurations\config-rabbit.json
+

@@ -1,5 +1,3 @@
-version: '2'
-
 mongo:
   image: mongo
   restart: always
@@ -29,9 +27,3 @@ rabbit:
     - 25671:25672
     - 15671:15672
 
-services:
-  schemaapi:
-    image: schemaapi
-    build:
-      context: ./SchemaApi
-      dockerfile: Dockerfile

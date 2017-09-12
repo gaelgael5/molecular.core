@@ -86,6 +86,14 @@ namespace SchemaApi.Models.Generators
             if (typeof(System.Collections.IEnumerable).IsAssignableFrom(type))
                 a = false;
 
+            //if (type.IsConstructedGenericType)
+            //    return false;
+
+            var __t = type.GetTypeInfo();
+
+            if (__t.IsGenericParameter)
+                a = false;
+
             return a;
         }
 

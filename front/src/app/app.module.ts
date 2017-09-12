@@ -15,10 +15,12 @@ import { RepoDetailComponent } from './github/repo-detail/repo-detail.component'
 import { LocationStrategy, HashLocationStrategy } from '@angular/common';
 import { ContactComponent } from './contact/contact.component';
 
-
-import { Applications } from './applications/applications.component';
-import { Menu } from './Commons/Menus/Menu.model';
-
+import { MenusComponent } from "./Components/Menus/Menus.component";
+import { MenuHeadComponent } from "./Components/Menus/MenuHead.component";
+import { MenuItemComponent } from "./Components/Menus/MenuItem.component";
+import { MenuService } from "./Models/Menus/MenuService";
+import { ContextCommandProvider } from "./Models/Commands/ContextCommandProvider";
+import { CommandRepository } from "./Models/Commands/CommandRepository";
 
 @NgModule({
   declarations: [
@@ -29,9 +31,9 @@ import { Menu } from './Commons/Menus/Menu.model';
     RepoDetailComponent,
     HomeComponent,
     ContactComponent,
-
-    Applications,
-    Menu
+    MenusComponent,
+    MenuHeadComponent,
+    MenuItemComponent
 
   ],
   imports: [
@@ -42,7 +44,10 @@ import { Menu } from './Commons/Menus/Menu.model';
     RouterModule.forRoot(rootRouterConfig, { useHash: true })
   ],
   providers: [
-    GithubService
+    GithubService,
+    MenuService,
+    CommandRepository,
+    ContextCommandProvider,
   ],
   bootstrap: [ AppComponent ]
 })

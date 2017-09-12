@@ -1,0 +1,16 @@
+
+
+<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+    <span class="glyphicon glyphicon-th"></span> {{menu.Name}} &nbsp;&nbsp; <span class="caret"></span> 
+</button>
+<ul class="dropdown-menu">
+    <li *ngFor="let menu of menu.Menus">
+        <span [ngSwitch]="menu.type">
+            <menuItem *ngSwitchCase="MenuItem" [menu]="menu" >&nbsp;&nbsp;{{menu.Name}}&nbsp;&nbsp;</menuItem>
+        </span>
+    </li>
+</ul>
+     
+
+
+

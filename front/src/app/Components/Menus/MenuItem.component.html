@@ -1,0 +1,19 @@
+
+<span class="btn" (click)="Run(menu)">
+    <span class="glyphicon glyphicon-home">
+        {{menu.Name}}
+    </span>
+</span>
+
+<li *ngFor="let menu of menu.Menus">
+    <span [ngSwitch]="menu.type">
+        <a 
+        *ngSwitchCase="MenuItem"         
+        [routerLink]="['/about']" >
+            <span class="glyphicon glyphicon-home"> &nbsp;&nbsp;{{menu.Name}}&nbsp;&nbsp;</span>
+        </a>
+    </span>
+</li>
+            
+      
+

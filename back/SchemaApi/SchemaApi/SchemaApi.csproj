@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <Compile Remove="Controllers\SchemaController.cs" />
+    <Compile Remove="Controllers\ServiceController.cs" />
     <Compile Remove="Models\Structures\ApplicationStructures.cs" />
   </ItemGroup>
 

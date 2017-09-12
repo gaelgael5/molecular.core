@@ -23,7 +23,7 @@
     foreach (var group in apis)
     {
 
-        string name = group.Key;
+        string name = group.Key.Replace("`", "");
         string targetPath = $"Shared\\{name}\\{name}service.interface.ts";
 
         template.AddStartComment();
@@ -58,9 +58,9 @@
         template.AddImport("Configuration", PathBuilderHelper.GetRelativePath(System.IO.Path.Combine(@"c:\app", targetPath), "c:\\app\\shared\\configuration.model.ts"));
         foreach (var item in _types)
         {
-            string txt = $"Shared\\{item.Namespace.Replace(".", "\\")}\\{item.Name}.ts";
+            string txt = $"Shared\\{item.Namespace.Replace(".", "\\")}\\{item.Name.Replace("`", "")}.ts";
             string _path = PathBuilderHelper.GetRelativePath(System.IO.Path.Combine(@"c:\app", targetPath), System.IO.Path.Combine(@"c:\app", txt));
-            template.AddImport(template.WriteType(item), _path);
+            template.AddImport(template.WriteTypeForImport(item), _path);
         }
 
         template.AddEmpty();
@@ -89,14 +89,14 @@
 
                 foreach (ApiParameterDescription p in api.ParameterDescriptions)
                 {
-                    string type = p.Type != null ? template.WriteType(p.Type) : "[NULL]";
+                    string type = p.Type != null ? template.WriteType(p.Type, false) : "[NULL]";
                     parameters.Add(new KeyValuePair<string, string>(p.Name, type));
                 }
 
                 string resultType = "Observable<{}>";
                 foreach (ApiResponseType response in api.SupportedResponseTypes)
                 {
-                    resultType = $"Observable<{template.WriteType(response.Type)}>";
+                    resultType = $"Observable<{template.WriteType(response.Type, false)}>";
                 }
 
                 template.AddInterfaceMethod(methodName, resultType, parameters);

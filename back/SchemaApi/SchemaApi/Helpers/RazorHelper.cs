@@ -17,22 +17,40 @@ namespace Molecular.Helpers
         private readonly RazorPage page;
 
 
-        public string WriteType(Type type)
+        public string WriteTypeForImport(Type type)
         {
 
+            StringBuilder sb = new StringBuilder();
+
+            if (!type.IsConstructedGenericType)
+                sb.Append(WriteType(type, false));
+
+            else
+            {
+                var _type = type.GetTypeInfo().GetGenericTypeDefinition();
+                sb.Append(_type.Name);
+            }
+
+            return sb.ToString().Replace("`", "");
+
+        }
+
+        public string WriteType(Type type, bool forDeclaration)
+        {
+
+            var __t = type.GetTypeInfo();
             StringBuilder sb = new StringBuilder();
 
             if (type.IsConstructedGenericType)
             {
 
-                var _type = type.GetTypeInfo().GetGenericTypeDefinition();
+                var _type = __t.GetGenericTypeDefinition();
 
                 if (_type.IsArray || typeof(IEnumerable).GetTypeInfo().IsAssignableFrom(_type))
-                {
                     sb.Append("Array");
-                }
+
                 else
-                    sb.Append(WriteType(_type));
+                    sb.Append(_type.Name);
 
                 sb.Append("<");
 
@@ -40,14 +58,61 @@ namespace Molecular.Helpers
                 foreach (Type item in type.GenericTypeArguments)
                 {
                     sb.Append(comma);
-                    sb.Append(WriteType(item));
+                    sb.Append(WriteType(item, false));
                     comma = ", ";
                 }
 
                 sb.Append(">");
 
             }
-            else if (type.GetTypeInfo().IsArray)
+            else if (__t.IsGenericTypeDefinition || __t.IsGenericType)
+            {
+
+                sb.Append(__t.Name);
+
+                sb.Append("<");
+
+                string comma = string.Empty;
+
+                var _types = __t.GetGenericArguments();
+                
+
+                foreach (Type item in __t.GetGenericArguments())
+                {
+                    
+                    sb.Append(comma);
+                    sb.Append(WriteType(item, false));
+
+                    if (forDeclaration)
+                    {
+
+                        var _types2 = item.GetTypeInfo().GetGenericParameterConstraints();
+                        if (_types2.Length > 0)
+                        {
+                            comma = string.Empty;
+                            sb.Append(" implements ");
+                            foreach (var type2 in _types2)
+                            {
+
+                                sb.Append(WriteType(type2, false));
+
+                            }
+                        }
+                    }
+
+                    comma = ", ";
+                }
+
+                sb.Append(">");
+
+            }            
+            else if (__t.IsGenericParameter)
+            {
+
+                sb.Append(type.Name);
+
+            }
+            else if (__t.IsArray)
             {
                 //sb.Append("<");
 
@@ -85,7 +150,7 @@ namespace Molecular.Helpers
 
             }
 
-            return sb.ToString();
+            return sb.ToString().Replace("`", "");
 
         }
 
@@ -144,7 +209,7 @@ namespace Molecular.Helpers
             page.WriteLiteral("\r\n");
         }
 
-        public void AddProperty(string name, string type, ExpositionEnum isPublic = ExpositionEnum.None , string initValue = null)
+        public void AddProperty(string name, string type, ExpositionEnum isPublic = ExpositionEnum.None, string initValue = null)
         {
             AddIndentation();
             string p = string.Empty;
@@ -247,9 +312,9 @@ namespace Molecular.Helpers
         {
             AddIndentation();
             string impl = string.Empty;
-            if (string.IsNullOrEmpty(implements))
+            if (!string.IsNullOrEmpty(implements))
             {
-                impl = $"implements {implements}";
+                impl = $"implements {implements} ";
             }
             page.WriteLiteral($"export class {serviceName} {impl}{{");
             return new disposable(this.page, this);

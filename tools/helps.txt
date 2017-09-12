@@ -1,0 +1,32 @@
+
+
+
+docker ps --format "{{json .}}"
+{
+	"Command":"\"docker-entrypoint...\"",
+	"CreatedAt":"2017-07-01 08:08:14 +0200 CEST",
+	"ID":"cab8c9112fcf",
+	"Image":"rabbitmq:3-management",
+	"Labels":"com.docker.compose.config-hash=73ac9a21d7a7bf1333fbc93dc3cb1287831bb14b9d6914ee401f32e2e3565eca,com.docker.compose.container-number=1,com.docker.compose.oneoff=False,com.docker.compose.project=dockercompose,com.docker.compose.service=rabbit,com.docker.compose.version=1.14.0",
+	"LocalVolumes":"1",
+	"Mounts":"/app/rabbit/...,d0e588681844...",
+	"Names":"rabbit",
+	"Networks":"bridge",
+	"Ports":"4369/tcp, 5671/tcp, 15671/tcp, 0.0.0.0:5671-\u003e5672/tcp, 0.0.0.0:8080-\u003e15672/tcp, 0.0.0.0:15671-\u003e15672/tcp, 0.0.0.0:25671-\u003e25672/tcp",
+	"RunningFor":"2 months ago",
+	"Size":"0B",
+	"Status":"Up 15 hours"
+}
+{"Command":"\"docker-entrypoint...\"","CreatedAt":"2017-07-01 08:08:14 +0200 CEST","ID":"ec472ad72e16","Image":"mongo","Labels":"com.docker.compose.container-number=1,com.docker.compose.oneoff=False,com.docker.compose.project=dockercompose,com.docker.compose.service=mongo,com.docker.compose.version=1.14.0,com.docker.compose.config-hash=04cdae74117e0fdab9a79b414b4f0c86bb8204a396732a23bf46e1198a37a442","LocalVolumes":"1","Mounts":"6dfc2611788e...,/app/mongo/d...","Names":"mongo","Networks":"bridge","Ports":"0.0.0.0:27017-\u003e27017/tcp, 0.0.0.0:28017-\u003e28017/tcp","RunningFor":"2 months ago","Size":"0B","Status":"Up 15 hours"}
+
+
+docker inspect --format='{{.}}' cab8c9112fcf
+'{0xc0424422c0 [{bind  /app/rabbit/datas /data/db  rw true rprivate} {volume d0e588681844f448cc8ffd9b95872d590f2dfc8d5666f52d44a5b33f02820170 /var/lib/docker/volumes/d0e588681844f448cc8ffd9b95872d590f2dfc8d5666f52d44a5b33f02820170/_data /var/lib/rabbitmq local  true }] 0xc042042280 0xc042032400}'
+
+
+docker inspect --format='{{.Config}}' cab8c9112fcf
+'{my-rabbit   false false false map[25672/tcp:{} 4369/tcp:{} 5671/tcp:{} 5672/tcp:{} 15671/tcp:{} 15672/tcp:{}] false false false [PATH=/usr/lib/rabbitmq/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin GOSU_VERSION=1.7 RABBITMQ_LOGS=- RABBITMQ_SASL_LOGS=- RABBITMQ_VERSION=3.6.10 RABBITMQ_DEBIAN_VERSION=3.6.10-1 HOME=/var/lib/rabbitmq] [rabbitmq-server] <nil> true rabbitmq:3-management map[/data/db:{} /var/lib/rabbitmq:{}]  [docker-entrypoint.sh] false  [] map[com.docker.compose.config-hash:73ac9a21d7a7bf1333fbc93dc3cb1287831bb14b9d6914ee401f32e2e3565eca com.docker.compose.container-number:1 com.docker.compose.oneoff:False com.docker.compose.project:dockercompose com.docker.compose.service:rabbit com.docker.compose.version:1.14.0]  <nil> []}'
+
+
+docker inspect --format='{{.NetworkSettings}}' cab8c9112fcf
+'{{ 715e7a6f46d19d65c11e0baaf8fe09a2f7232cd89405f7f3dc73b52b837a523d false  0 map[15671/tcp:[] 15672/tcp:[{0.0.0.0 15671} {0.0.0.0 8080}] 25672/tcp:[{0.0.0.0 25671}] 4369/tcp:[] 5671/tcp:[] 5672/tcp:[{0.0.0.0 5671}]] /var/run/docker/netns/715e7a6f46d1 [] []} {3ae340275d271863def8306f9279b72df91555bb105bcb016200e8913cfa0596 172.17.0.1  0 172.17.0.3 16  02:42:ac:11:00:03} map[bridge:0xc04245e0c0]}'
