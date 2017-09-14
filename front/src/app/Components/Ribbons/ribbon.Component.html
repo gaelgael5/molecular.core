@@ -1,0 +1,9 @@
+
+  <ul class="nav nav-tabs">
+    <li *ngFor="let panel of ribbon.Panels"><a href="#{{panel.Name}}" data-toggle="tab" >&nbsp;{{panel.Display}}&nbsp;</a></li>
+  </ul>
+  <div class="tab-content">
+    <ribbonpanel class="tab-pane" *ngFor="let panel of ribbon.Panels" id="{{panel.Name}}" [panel]="panel">Vous pouvez consulter le détail du programme</ribbonpanel>
+  </div>
+
+

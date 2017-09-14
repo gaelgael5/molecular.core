@@ -1,8 +1,8 @@
 
 
 import { ICommand } from "./ICommand.interface";
-import { ContextCommand } from "./ContextCommand";
 import { Predicate, Injectable } from "@angular/core";
+import { ContextCommand } from "./ContextCommand";
 import { DelegateCommand } from "./DelegateCommand";
 
 /**

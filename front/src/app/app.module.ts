@@ -21,6 +21,10 @@ import { MenuItemComponent } from "./Components/Menus/MenuItem.component";
 import { MenuService } from "./Models/Menus/MenuService";
 import { ContextCommandProvider } from "./Models/Commands/ContextCommandProvider";
 import { CommandRepository } from "./Models/Commands/CommandRepository";
+import { RibbonService } from "./Models/Ribbons/RibbonService";
+import { RibbonComponent } from "./Components/Ribbons/Ribbon.Component";
+import { RibbonPanelComponent } from "./Components/Ribbons/RibbonPanel.Component";
+import { RibbonSubPanelComponent } from "./Components/Ribbons/RibbonSubPanel.Component";
 
 @NgModule({
   declarations: [
@@ -31,9 +35,14 @@ import { CommandRepository } from "./Models/Commands/CommandRepository";
     RepoDetailComponent,
     HomeComponent,
     ContactComponent,
+
     MenusComponent,
     MenuHeadComponent,
-    MenuItemComponent
+    MenuItemComponent,
+
+    RibbonComponent,
+    RibbonPanelComponent,
+    RibbonSubPanelComponent,
 
   ],
   imports: [
@@ -45,9 +54,13 @@ import { CommandRepository } from "./Models/Commands/CommandRepository";
   ],
   providers: [
     GithubService,
+    
     MenuService,
+    RibbonService,
+    
     CommandRepository,
     ContextCommandProvider,
+
   ],
   bootstrap: [ AppComponent ]
 })
