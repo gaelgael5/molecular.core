@@ -25,6 +25,8 @@ import { RibbonService } from "./Models/Ribbons/RibbonService";
 import { RibbonComponent } from "./Components/Ribbons/Ribbon.Component";
 import { RibbonPanelComponent } from "./Components/Ribbons/RibbonPanel.Component";
 import { RibbonSubPanelComponent } from "./Components/Ribbons/RibbonSubPanel.Component";
+import { consoleComponent } from "./components/console/console.component";
+import { TreeModule } from './Components/trees/angular-tree-component';
 
 @NgModule({
   declarations: [
@@ -35,6 +37,7 @@ import { RibbonSubPanelComponent } from "./Components/Ribbons/RibbonSubPanel.Com
     RepoDetailComponent,
     HomeComponent,
     ContactComponent,
+    consoleComponent,
 
     MenusComponent,
     MenuHeadComponent,
@@ -50,7 +53,8 @@ import { RibbonSubPanelComponent } from "./Components/Ribbons/RibbonSubPanel.Com
     FormsModule,
     ReactiveFormsModule,
     HttpModule,
-    RouterModule.forRoot(rootRouterConfig, { useHash: true })
+    RouterModule.forRoot(rootRouterConfig, { useHash: true }),
+    TreeModule
   ],
   providers: [
     GithubService,

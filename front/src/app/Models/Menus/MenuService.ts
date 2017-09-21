@@ -35,11 +35,18 @@ export class MenuService {
         (context : ContextCommand) => { return true; }
        );
 
+       this.commandRepository.Method("GoToConsole", 
+       (context : ContextCommand) => 
+       {
+           context.Router.navigate(["/console"]);
+       },  
+       (context : ContextCommand) => { return true; }
+      );
 
         this.menus = new Array<MenuHead>();
         var m = new MenuHead("Applications 1", [
 
-            new MenuItem("Console 1", null),
+            new MenuItem("Console 1", this.commandRepository.Get("GoToConsole")),
             new MenuItem("Globalization 1",  null),
             new MenuItem("About", this.commandRepository.Get("GoToAbout")),
 
