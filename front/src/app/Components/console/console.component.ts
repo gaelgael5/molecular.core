@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import { TreeModel } from '../trees/angular-tree-component';
+import { TreeModel } from 'angular-tree-component';
 
 @Component({
     selector:"console",

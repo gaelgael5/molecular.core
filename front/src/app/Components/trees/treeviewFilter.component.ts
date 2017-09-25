@@ -1,20 +1,24 @@
 import { Component } from '@angular/core';
-import { TreeModel } from './angular-tree-component';
+import { TreeModel } from 'angular-tree-component';
 
 @Component({
   selector: 'app-filter',
   template: `
+    <div>
     <h2>Filter</h2>
     <input #filter (keyup)="tree.treeModel.filterNodes(filter.value)" placeholder="filter nodes"/>
+    <input #filter2 (keyup)="filterFn(filter2.value, tree.treeModel)" placeholder="filter nodes by fuzzy search"/>
     <button (click)="tree.treeModel.clearFilter()">Clear Filter</button>
     <tree-root #tree [focused]="true" [nodes]="nodes"></tree-root>    
-    <input #filter2 (keyup)="filterFn(filter2.value, tree.treeModel)" placeholder="filter nodes by fuzzy search"/>
+    </div>
  `,
   styles: [''],
+  
   
 })
 export class treeFilterComponent {
 
+  
   nodes = [
     {
       name: 'North America',

@@ -26,7 +26,8 @@ import { RibbonComponent } from "./Components/Ribbons/Ribbon.Component";
 import { RibbonPanelComponent } from "./Components/Ribbons/RibbonPanel.Component";
 import { RibbonSubPanelComponent } from "./Components/Ribbons/RibbonSubPanel.Component";
 import { consoleComponent } from "./components/console/console.component";
-import { TreeModule } from './Components/trees/angular-tree-component';
+import { TreeModule } from 'angular-tree-component';
+import { treeFilterComponent } from './Components/trees/treeviewFilter.component';
 
 @NgModule({
   declarations: [
@@ -47,6 +48,8 @@ import { TreeModule } from './Components/trees/angular-tree-component';
     RibbonPanelComponent,
     RibbonSubPanelComponent,
 
+    treeFilterComponent
+    
   ],
   imports: [
     BrowserModule,

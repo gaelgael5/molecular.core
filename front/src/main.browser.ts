@@ -3,6 +3,8 @@ import './polyfills.browser';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { AppModule } from './app/app.module';
 
+import './sass/main.scss';
+
 export const platformRef = platformBrowserDynamic();
 
 export function main() {

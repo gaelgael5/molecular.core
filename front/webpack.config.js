@@ -2,11 +2,12 @@ var webpack = require('webpack');
 var path = require('path');
 var webpackMerge = require('webpack-merge');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 // Webpack Config
 var webpackConfig = {
   entry: {
-    'main': './src/main.browser.ts',
+    'main': './src/main.browser.ts',    
   },
 
   output: {
@@ -28,6 +29,8 @@ var webpackConfig = {
       template: 'src/index.html'
     }),
 
+    new ExtractTextPlugin('styles.css'),
+
   ],
 
   module: {
@@ -41,8 +44,25 @@ var webpackConfig = {
           'angular2-router-loader'
         ]
       },
-      { test: /\.css$/, loaders: ['to-string-loader', 'css-loader'] },
-      { test: /\.html$/, loader: 'raw-loader' }
+      { 
+        test: /\.css$/,
+        loaders: ['to-string-loader', 'css-loader'] 
+        // loaders: ExtractTextPlugin.extract({ fallback: "style-loader", loader: "css-loader" }) 
+        
+      },
+      { 
+        test: /\.html$/, 
+        loader: 'raw-loader' 
+      },
+      {
+        test: /\.(sass|scss)$/,
+        // loader: ExtractTextPlugin.extract(['sass-loader'])
+        loader : ExtractTextPlugin.extract({
+          fallback: "css-loader",
+          use: "sass-loader"
+        })
+      },
+
     ]
   }
 
