@@ -1,5 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { TreeModel } from 'angular-tree-component';
+import { ITreeNode } from 'angular-tree-component/dist/defs/api';
+import { INode } from '../../Models/Trees/INode';
 
 @Component({
   selector: 'app-filter',
@@ -9,7 +11,12 @@ import { TreeModel } from 'angular-tree-component';
     <!--  <input #filter (keyup)="tree.treeModel.filterNodes(filter.value)" placeholder="filter nodes"/> -->
     <input #filter2 (keyup)="filterFn(filter2.value, tree.treeModel)" placeholder="filter"/>
     <button (click)="tree.treeModel.clearFilter()">Clear Filter</button>
-    <tree-root #tree [focused]="true" [nodes]="nodes"></tree-root>    
+
+    <tree-root #tree [focused]="true" [nodes]="nodes" (onActiveChanged)="OnEvent($event)" >
+      <ng-template #treeNodeTemplate let-node let-index="index">
+        <span (click)="go(tree.treeModel)">{{ node.data.name }}</span>
+      </ng-template>
+    </tree-root>    
     </div>
  `,
   styles: [''],
@@ -24,8 +31,22 @@ export class treeFilterComponent {
     treeModel.filterNodes((node) => fuzzysearch(value, node.data.name));
   }
 
-}
+  go(treeModel : TreeModel) {
 
+    var focusedArray = <Array<ITreeNode>> treeModel.activeNodes
+    if (focusedArray.length > 0)
+    {
+
+      var focused : ITreeNode = focusedArray[0];
+      var data = <INode>focused.data;
+
+      debugger;
+    
+    }
+    
+  }
+  
+}
 
 function fuzzysearch (needle, haystack) {
   const haystackLC = haystack.toLowerCase();
