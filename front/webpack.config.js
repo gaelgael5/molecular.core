@@ -29,7 +29,10 @@ var webpackConfig = {
       template: 'src/index.html'
     }),
 
-    new ExtractTextPlugin('styles.css'),
+    new ExtractTextPlugin({ // define where to save the file
+      filename: 'dist/[name].bundle.css',
+      allChunks: true,
+    }),
 
   ],
 
@@ -47,8 +50,7 @@ var webpackConfig = {
       { 
         test: /\.css$/,
         loaders: ['to-string-loader', 'css-loader'] 
-        // loaders: ExtractTextPlugin.extract({ fallback: "style-loader", loader: "css-loader" }) 
-        
+        // loader: ExtractTextPlugin.extract({ loader: 'css-loader?importLoaders=1', }),
       },
       { 
         test: /\.html$/, 
@@ -57,10 +59,9 @@ var webpackConfig = {
       {
         test: /\.(sass|scss)$/,
         // loader: ExtractTextPlugin.extract(['sass-loader'])
-        loader : ExtractTextPlugin.extract({
-          fallback: "css-loader",
-          use: "sass-loader"
-        })
+        // loader : ExtractTextPlugin.extract({ fallback: "css-loader", use: "sass-loader" })
+        loader: ExtractTextPlugin.extract(['css-loader', 'sass-loader']),
+
       },
 
     ]

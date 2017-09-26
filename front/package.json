@@ -50,7 +50,7 @@
     "rimraf": "^2.5.4",
     "to-string-loader": "^1.1.4",
     "typescript": "~2.2.0",
-    "webpack": "^2.4.1",
+    "webpack": "^3.3.0",
     "webpack-dev-server": "2.4.2",
     "webpack-merge": "^4.1.0"
   },

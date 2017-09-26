@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { TreeModel } from 'angular-tree-component';
 
 @Component({
@@ -6,8 +6,8 @@ import { TreeModel } from 'angular-tree-component';
   template: `
     <div>
     <h2>Filter</h2>
-    <input #filter (keyup)="tree.treeModel.filterNodes(filter.value)" placeholder="filter nodes"/>
-    <input #filter2 (keyup)="filterFn(filter2.value, tree.treeModel)" placeholder="filter nodes by fuzzy search"/>
+    <!--  <input #filter (keyup)="tree.treeModel.filterNodes(filter.value)" placeholder="filter nodes"/> -->
+    <input #filter2 (keyup)="filterFn(filter2.value, tree.treeModel)" placeholder="filter"/>
     <button (click)="tree.treeModel.clearFilter()">Clear Filter</button>
     <tree-root #tree [focused]="true" [nodes]="nodes"></tree-root>    
     </div>
@@ -17,38 +17,8 @@ import { TreeModel } from 'angular-tree-component';
   
 })
 export class treeFilterComponent {
-
   
-  nodes = [
-    {
-      name: 'North America',
-      children: [
-        { name: 'United States', children: [
-          {name: 'New York'},
-          {name: 'California'},
-          {name: 'Florida'}
-        ] },
-        { name: 'Canada' }
-      ]
-    },
-    {
-      name: 'South America',
-      children: [
-        { name: 'Argentina', children: [] },
-        { name: 'Brazil' }
-      ]
-    },
-    {
-      name: 'Europe',
-      children: [
-        { name: 'England' },
-        { name: 'Germany' },
-        { name: 'France' },
-        { name: 'Italy' },
-        { name: 'Spain' }
-      ]
-    }
-  ];
+  @Input() nodes : any;
 
   filterFn(value, treeModel: TreeModel) {
     treeModel.filterNodes((node) => fuzzysearch(value, node.data.name));
